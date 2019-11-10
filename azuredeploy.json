@@ -20,8 +20,13 @@
       "metadata": {
         "description": "Specifies the objectId of the owner for the key vault resource"
       }
+    },
+    "gitToken": {
+      "type": "string",
+      "metadata": {
+        "description": "Git Token to access artifact for devtest labs"
+      }
     }
-
   },
   "variables": {
     "devTestLabs": "[concat(parameters('projectName'), '-dtl')]",
