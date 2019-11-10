@@ -1,0 +1,3 @@
+commands.cmd
+azuredeploy_dev.parameters.json
+\.vscode/*

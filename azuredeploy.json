@@ -1,0 +1,310 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "projectName": {
+      "type": "string",
+      "defaultValue": "dsf",
+      "metadata": {
+        "description": "Specifies a name for generating resource names."
+      }
+    },
+    "tenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the tenantId of the subscription the ARM is deployed under"
+      }
+    },
+    "objectId": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the objectId of the owner for the key vault resource"
+      }
+    }
+
+  },
+  "variables": {
+    "devTestLabs": "[concat(parameters('projectName'), '-dtl')]",
+    "virtualNetworkName": "[concat(parameters('projectName'), '-vnet')]",
+    "subnetName": "[concat(parameters('projectName'),'-subnet')]",
+    "addressPrefix": "10.1.0.0/16",
+    "subnetPrefix": "10.1.0.0/24",
+    "networkSecurityGroupName": "[concat(parameters('projectName'), '-nsg')]",
+    "keyVaultName": "[concat(parameters('projectName'), '-kv')]",
+    "cosmodDbName": "[concat(parameters('projectName'), '-cdb')]",
+    "sharedImageGalleryName": "[concat(parameters('projectName'), '_sig')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2018-11-01",
+      "name": "[variables('networkSecurityGroupName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "AllowRDP",
+            "properties": {
+              "description": "Allow RDP inbound traffic",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1001,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2019-04-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('virtualNetworkName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('addressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('subnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('networkSecurityGroupName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-15",
+      "type": "Microsoft.DevTestLab/labs",
+      "name": "[variables('devTestLabs')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+      },
+      "resources": [
+        {
+          "apiVersion": "2018-09-15",
+          "name": "test-vnet",
+          "type": "virtualNetworks",
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs'))]"
+          ],
+          "properties": {
+            "description": "Existing Compute virtual network associated as part of the lab creation process.",
+            "externalProviderResourceId": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+            "subnetOverrides": [
+              {
+                "name": "[variables('subnetName')]",
+                "resourceId": "[resourceId('Microsoft.Network/virtualNetworks/subnets',variables('virtualNetworkName'),variables('subnetName'))]",
+                "useInVmCreationPermission": "Allow",
+                "usePublicIpAddressPermission": "Allow"
+              }
+            ]
+          }
+        },
+        {
+          "apiVersion": "2018-10-15-preview",
+          "name": "myGallery",
+          "type": "sharedGalleries",
+          "properties": {
+            "galleryId": "[resourceId('Microsoft.Compute/galleries', variables('sharedImageGalleryName'))]",
+            "allowAllImages": "Enabled"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs'))]",
+            "[resourceId('Microsoft.Compute/galleries', variables('sharedImageGalleryName'))]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2018-02-14",
+      "name": "[variables('keyVaultName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "tenantId": "[parameters('tenantId')]",
+        "accessPolicies": [
+          {
+            "tenantId": "[parameters('tenantId')]",
+            "objectId": "[parameters('objectId')]",
+            "permissions": {
+              "keys": [
+                "Get",
+                "Create",
+                "Delete",
+                "List",
+                "Update",
+                "Import",
+                "Backup",
+                "Restore",
+                "Recover"
+              ],
+              "secrets": [
+                "Get",
+                "List",
+                "Set",
+                "Delete",
+                "Backup",
+                "Restore",
+                "Recover"
+              ],
+              "certificates": [
+                "Get",
+                "List",
+                "Delete",
+                "Create",
+                "Import",
+                "Update",
+                "ManageContacts",
+                "GetIssuers",
+                "ListIssuers",
+                "SetIssuers",
+                "DeleteIssuers",
+                "ManageIssuers",
+                "Recover"
+              ],
+              "storage": [
+                "get",
+                "list",
+                "delete",
+                "set",
+                "update",
+                "regeneratekey",
+                "setsas",
+                "listsas",
+                "getsas",
+                "deletesas"
+              ]
+            }
+          }
+        ],
+        "enabledForDeployment": false,
+        "enabledForDiskEncryption": false,
+        "enabledForTemplateDeployment": false
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2018-02-14",
+      "name": "[concat(variables('keyVaultName'), '/', 'mongo-db-conn-string')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmodDbName'))]"
+      ],
+      "tags": {
+        "file-encoding": "utf-8"
+      },
+      "properties": {
+        "value": "[listConnectionStrings(concat('Microsoft.DocumentDB/databaseAccounts/',variables('cosmodDbName')),'2019-08-01').connectionStrings[2].connectionString]"
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2019-08-01",
+      "name": "[variables('cosmodDbName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "defaultExperience": "Azure Cosmos DB for MongoDB API",
+        "Owner": "mircea.amarascu@uipath.com",
+        "Project": "PreSalesCloud"
+      },
+      "kind": "MongoDB",
+      "properties": {
+        "enableAutomaticFailover": false,
+        "enableMultipleWriteLocations": false,
+        "isVirtualNetworkFilterEnabled": false,
+        "virtualNetworkRules": [
+        ],
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session",
+          "maxIntervalInSeconds": 5,
+          "maxStalenessPrefix": 100
+        },
+        "locations": [
+          {
+            "locationName": "[resourceGroup().location]",
+            "failoverPriority": 0,
+            "isZoneRedundant": false
+          }
+        ],
+        "capabilities": [
+          {
+            "name": "EnableMongo"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Compute/galleries",
+      "apiVersion": "2019-03-01",
+      "name": "[variables('sharedImageGalleryName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "description": "Demo Scalability Framework shared image gallery"
+      },
+      "resources": [
+        {
+          "type": "images",
+          "apiVersion": "2019-03-01",
+          "name": "presales-demo",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[variables('sharedImageGalleryName')]"
+          ],
+          "properties": {
+            "osType": "Windows",
+            "osState": "Generalized",
+            "identifier": {
+              "publisher": "Uipath",
+              "offer": "uipath-presales-demo",
+              "sku": "presales-demo"
+            },
+            "recommended": {
+              "vCPUs": {
+                "min": 16,
+                "max": 64
+              },
+              "memory": {
+                "min": 500,
+                "max": 1024
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "labId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs'))]"
+    },
+    "cosmosDb": {
+      "type": "object",
+      "value": "[listConnectionStrings(concat('Microsoft.DocumentDB/databaseAccounts/',variables('cosmodDbName')),'2019-08-01') ]"
+    },
+    "cosmosDb2": {
+      "type": "object",
+      "value": "[listKeys(concat('Microsoft.DocumentDB/databaseAccounts/',variables('cosmodDbName')),'2019-08-01') ]"
+    }
+  }
+}

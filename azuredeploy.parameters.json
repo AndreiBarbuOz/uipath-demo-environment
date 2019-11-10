@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "tenantId": {
+      "value": "d8353d2a-b153-4d17-8827-902c51f72357"
+    },
+    "objectId": {
+      "value": "7fc43de6-8dfd-4804-ac82-3e5d71d9e477"
+    }
+  }
+}
