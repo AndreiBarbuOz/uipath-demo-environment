@@ -55,6 +55,14 @@
               {
                 "name": "connectionString",
                 "value": "[parameters('mongoDbConnectionString')]"
+              },
+              {
+                "name": "username",
+                "value": "[parameters('userName')]"
+              },
+              {
+                "name": "password",
+                "value": "[parameters('password')]"
               }
             ]
           }

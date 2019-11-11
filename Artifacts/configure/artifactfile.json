@@ -29,6 +29,6 @@
   },
   "targetOsType": "Windows",
   "runCommand": {
-    "commandToExecute": "[concat('python ./config.py -c \"', parameters('connectionString'), '\"', ' -u ', parameters('username'), ' -p ', parameters('password')) ]"
+    "commandToExecute": "[concat('python ./config.py -c \"', parameters('connectionString'), '\"', ' -u ', parameters('username'), ' -p \"', parameters('password'), '\"') ]"
   }
 }
