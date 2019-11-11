@@ -29,11 +29,11 @@ def get_access_token(refresh_token, client_id, auth_url):
     print(r.json())
     return r.json()['access_token']
 
-def create_robot(access_token, service_logical_name, orch_url):
+def create_robot(access_token, service_logical_name, orch_url, username, password):
     body = {"Name": "test123", 
             "MachineName": os.environ['COMPUTERNAME'], 
-            "Username": os.environ["USERDOMAIN"] + '\\' + os.environ["USERNAME"], 
-            "Password": "!QAZxsw23edc", 
+            "Username": os.environ["COMPUTERNAME"] + '\\' + username, 
+            "Password": password, 
             "Type": "Development"}
     print(body)
     headers = { "X-UIPATH-TenantName":service_logical_name, 
@@ -56,7 +56,7 @@ def main(args):
     print(config)
     access_token = get_access_token(config['refreshToken'], config['clientId'], config['authUrl'])
 #    uri = get_secret('https://test-vault-presales.vault.azure.net/','mongo-db-conn-string','1a775478f0024c2e9d0b2d48b21fa8bb') 
-    create_robot(access_token, config['serviceLogicalName'], config['orchUrl'])
+    create_robot(access_token, config['serviceLogicalName'], config['orchUrl'], args.username, args.password)
 
 
 if __name__ == '__main__': 
@@ -65,6 +65,8 @@ if __name__ == '__main__':
 
     # Optional argument which requires a parameter (eg. -d test)
     parser.add_argument("-c", "--connString", action="store", dest="connString")
+    parser.add_argument("-u", "--user", action="store", dest="username")
+    parser.add_argument("-p", "--password", action="store", dest="password")
 
     args = parser.parse_args()
     print(args)

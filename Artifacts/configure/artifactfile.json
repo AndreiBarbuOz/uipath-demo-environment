@@ -13,10 +13,22 @@
       "defaultValue": "",
       "displayName": "MongoDB connection string",
       "description": "Connection string for the MongoDB configuration repository"
+    },
+    "username": {
+      "type": "string",
+      "defaultValue": "",
+      "displayName": "Windows user",
+      "description": "username"
+    },
+    "password": {
+      "type": "string",
+      "defaultValue": "",
+      "displayName": "password",
+      "description": "password"
     }
   },
   "targetOsType": "Windows",
   "runCommand": {
-    "commandToExecute": "[concat('python ./config.py -c \"', parameters('connectionString'), '\"') ]"
+    "commandToExecute": "[concat('python ./config.py -c \"', parameters('connectionString'), '\"', ' -u ', parameters('username'), ' -p ', parameters('password')) ]"
   }
 }
