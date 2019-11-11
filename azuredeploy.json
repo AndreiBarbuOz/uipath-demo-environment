@@ -131,6 +131,23 @@
             "[resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs'))]",
             "[resourceId('Microsoft.Compute/galleries', variables('sharedImageGalleryName'))]"
           ]
+        },
+        {
+          "apiVersion": "2018-10-15-preview",
+          "name": "Configure",
+          "type": "artifactSources",
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs'))]"
+          ],
+          "properties": {
+            "uri": "https://github.com/AndreiBarbuOz/uipath-demo-environment.git",
+            "folderPath": "/artifact",
+            "branchRef": "heads/master",
+            "displayName": "Configuration",
+            "securityToken": "[parameters('gitToken')]",
+            "sourceType": "GitHub",
+            "status": "Enabled"
+          }
         }
       ]
     },
