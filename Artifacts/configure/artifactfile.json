@@ -17,6 +17,6 @@
   },
   "targetOsType": "Windows",
   "runCommand": {
-    "commandToExecute": "[concat('python ./config.py ', parameters('connectionString'))]"
+    "commandToExecute": "[concat('python ./config.py \"', parameters('connectionString'), '\"') ]"
   }
 }
