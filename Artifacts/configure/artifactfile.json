@@ -10,12 +10,13 @@
   "parameters": {
     "connectionString": {
       "type": "string",
+      "defaultValue": "",
       "displayName": "MongoDB connection string",
       "description": "Connection string for the MongoDB configuration repository"
     }
   },
   "targetOsType": "Windows",
   "runCommand": {
-    "commandToExecute": "[concat('python ./config.py', parameters('connectionString'))]"
+    "commandToExecute": "[concat('python ./config.py ', parameters('connectionString'))]"
   }
 }

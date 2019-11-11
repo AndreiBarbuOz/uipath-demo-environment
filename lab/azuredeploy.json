@@ -101,7 +101,7 @@
       "resources": [
         {
           "apiVersion": "2018-09-15",
-          "name": "test-vnet",
+          "name": "DevTest Lab VNet",
           "type": "virtualNetworks",
           "dependsOn": [
             "[resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs'))]"
@@ -121,7 +121,7 @@
         },
         {
           "apiVersion": "2018-10-15-preview",
-          "name": "myGallery",
+          "name": "UiPathGallery",
           "type": "sharedGalleries",
           "properties": {
             "galleryId": "[resourceId('Microsoft.Compute/galleries', variables('sharedImageGalleryName'))]",
@@ -134,15 +134,15 @@
         },
         {
           "apiVersion": "2018-10-15-preview",
-          "name": "Configure",
+          "name": "UipathArtifacts",
           "type": "artifactSources",
           "dependsOn": [
             "[resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs'))]"
           ],
           "properties": {
             "uri": "https://github.com/AndreiBarbuOz/uipath-demo-environment.git",
-            "folderPath": "/artifact",
-            "branchRef": "heads/master",
+            "folderPath": "/Artifacts",
+            "branchRef": "master",
             "displayName": "Configuration",
             "securityToken": "[parameters('gitToken')]",
             "sourceType": "GitHub",
@@ -320,13 +320,25 @@
       "type": "string",
       "value": "[resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs'))]"
     },
-    "cosmosDb": {
-      "type": "object",
-      "value": "[listConnectionStrings(concat('Microsoft.DocumentDB/databaseAccounts/',variables('cosmodDbName')),'2019-08-01') ]"
+    "labName": {
+      "type": "string",
+      "value": "[variables('devTestLabs')]"
     },
-    "cosmosDb2": {
-      "type": "object",
-      "value": "[listKeys(concat('Microsoft.DocumentDB/databaseAccounts/',variables('cosmodDbName')),'2019-08-01') ]"
+    "vnetId": {
+      "type": "string",
+      "value": "[resourceId( 'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
+    },
+    "subnetId": {
+      "type": "string",
+      "value": "[resourceId( 'Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
+    },
+    "secretKeyId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'mongo-db-conn-string')]"
+    },
+    "sharedImageId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Compute/galleries/images', variables('sharedImageGalleryName'), 'presales-demo')]"
     }
   }
 }

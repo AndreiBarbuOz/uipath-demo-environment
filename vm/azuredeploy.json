@@ -1,0 +1,71 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "newVMName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the new vm to be created."
+      }
+    },
+    "labName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of an existing lab where the new vm will be created."
+      }
+    },
+    "customImageId": {
+      "type": "string",
+      "metadata": {
+        "description": "The id of an existing custom image which will be used to create the new vm. The specified image must exist in the lab (identified via the 'existingLabName' parameter)."
+      }
+    },
+    "userName": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    },
+    "mongoDbConnectionString": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "resourceName": "[concat(parameters('labName'), '/', parameters('newVMName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-10-15-preview",
+      "type": "Microsoft.DevTestLab/labs/virtualMachines",
+      "name": "[variables('resourceName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sharedImageId": "[parameters('customImageId')]",
+        "notes": "presales-demo",
+        "size": "Standard_D4s_v3",
+        "userName": "[parameters('userName')]",
+        "password": "[parameters('password')]",
+        "isAuthenticationWithSshKey": false,
+        "storageType": "StandardSSD",
+        "disallowPublicIpAddress": false,
+        "artifacts": [
+          {
+            "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('labName'), 'UipathArtifacts', 'configure')]",
+            "parameters": [
+              {
+                "name": "connectionString",
+                "value": "[parameters('mongoDbConnectionString')]"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "vmId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.DevTestLab/labs/virtualMachines', parameters('labName'), parameters('newVMName'))]"
+    }
+  }
+}
