@@ -1,5 +1,5 @@
 {
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "newVMName": {
@@ -14,7 +14,7 @@
         "description": "The name of an existing lab where the new vm will be created."
       }
     },
-    "customImageId": {
+    "sharedImageId": {
       "type": "string",
       "metadata": {
         "description": "The id of an existing custom image which will be used to create the new vm. The specified image must exist in the lab (identified via the 'existingLabName' parameter)."
@@ -31,7 +31,10 @@
     }
   },
   "variables": {
-    "resourceName": "[concat(parameters('labName'), '/', parameters('newVMName'))]"
+    "labSubnetName": "dsf-subnet",
+    "resourceName": "[concat(parameters('labName'), '/', parameters('newVMName'))]",
+    "labVirtualNetworkId": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('labName'), variables('labVirtualNetworkName'))]",
+    "labVirtualNetworkName": "DevTest Lab VNet"
   },
   "resources": [
     {
@@ -40,7 +43,9 @@
       "name": "[variables('resourceName')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "sharedImageId": "[parameters('customImageId')]",
+        "sharedImageId": "[parameters('sharedImageId')]",
+        "labVirtualNetworkId": "[variables('labVirtualNetworkId')]",
+        "labSubnetName": "[variables('labSubnetName')]",
         "notes": "presales-demo",
         "size": "Standard_D4s_v3",
         "userName": "[parameters('userName')]",
@@ -48,6 +53,10 @@
         "isAuthenticationWithSshKey": false,
         "storageType": "StandardSSD",
         "disallowPublicIpAddress": false,
+        "tags": {
+          "Owner": "andrei.barbu@uipath.com",
+          "Project": "PreSalesCloud"
+        },
         "artifacts": [
           {
             "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('labName'), 'UipathArtifacts', 'configure')]",

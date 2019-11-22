@@ -37,7 +37,10 @@
     "networkSecurityGroupName": "[concat(parameters('projectName'), '-nsg')]",
     "keyVaultName": "[concat(parameters('projectName'), '-kv')]",
     "cosmodDbName": "[concat(parameters('projectName'), '-cdb')]",
-    "sharedImageGalleryName": "[concat(parameters('projectName'), '_sig')]"
+    "sharedImageGalleryName": "[concat(parameters('projectName'), '_sig')]",
+    "dtlSharedImageGalleryName": "uipathdemo",
+    "shareImageName": "presales-demo",
+    "userAssignedIdentity": "[concat(parameters('projectName'), '-msi')]"
   },
   "resources": [
     {
@@ -92,12 +95,23 @@
       }
     },
     {
-      "apiVersion": "2018-09-15",
+      "name": "[variables('userAssignedIdentity')]",
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2018-11-30",
+      "location": "[resourceGroup().location]",
+      "properties": {}
+    },    
+    {
+      "apiVersion": "2018-10-15-preview",
       "type": "Microsoft.DevTestLab/labs",
       "name": "[variables('devTestLabs')]",
       "location": "[resourceGroup().location]",
       "properties": {
+        "vmCreationResourceGroupId": "[resourceGroup().id]"
       },
+      "dependsOn": [
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentity'))]"
+      ],
       "resources": [
         {
           "apiVersion": "2018-09-15",
@@ -121,7 +135,7 @@
         },
         {
           "apiVersion": "2018-10-15-preview",
-          "name": "UiPathGallery",
+          "name": "[variables('dtlSharedImageGalleryName')]",
           "type": "sharedGalleries",
           "properties": {
             "galleryId": "[resourceId('Microsoft.Compute/galleries', variables('sharedImageGalleryName'))]",
@@ -156,6 +170,9 @@
       "apiVersion": "2018-02-14",
       "name": "[variables('keyVaultName')]",
       "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentity'))]"
+      ],
       "properties": {
         "sku": {
           "family": "A",
@@ -165,61 +182,26 @@
         "accessPolicies": [
           {
             "tenantId": "[parameters('tenantId')]",
+            "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentity')), '2018-11-30', 'Full').properties.principalId ]",
+            "permissions": {
+              "secrets": [
+                "all"
+              ]
+            }
+          },
+          {
+            "tenantId": "[parameters('tenantId')]",
             "objectId": "[parameters('objectId')]",
             "permissions": {
-              "keys": [
-                "Get",
-                "Create",
-                "Delete",
-                "List",
-                "Update",
-                "Import",
-                "Backup",
-                "Restore",
-                "Recover"
-              ],
               "secrets": [
-                "Get",
-                "List",
-                "Set",
-                "Delete",
-                "Backup",
-                "Restore",
-                "Recover"
-              ],
-              "certificates": [
-                "Get",
-                "List",
-                "Delete",
-                "Create",
-                "Import",
-                "Update",
-                "ManageContacts",
-                "GetIssuers",
-                "ListIssuers",
-                "SetIssuers",
-                "DeleteIssuers",
-                "ManageIssuers",
-                "Recover"
-              ],
-              "storage": [
-                "get",
-                "list",
-                "delete",
-                "set",
-                "update",
-                "regeneratekey",
-                "setsas",
-                "listsas",
-                "getsas",
-                "deletesas"
+                "all"
               ]
             }
           }
         ],
         "enabledForDeployment": false,
         "enabledForDiskEncryption": false,
-        "enabledForTemplateDeployment": false
+        "enabledForTemplateDeployment": true
       }
     },
     {
@@ -243,11 +225,6 @@
       "apiVersion": "2019-08-01",
       "name": "[variables('cosmodDbName')]",
       "location": "[resourceGroup().location]",
-      "tags": {
-        "defaultExperience": "Azure Cosmos DB for MongoDB API",
-        "Owner": "mircea.amarascu@uipath.com",
-        "Project": "PreSalesCloud"
-      },
       "kind": "MongoDB",
       "properties": {
         "enableAutomaticFailover": false,
@@ -273,7 +250,48 @@
             "name": "EnableMongo"
           }
         ]
-      }
+      },
+      "resources": [
+        {
+          "name": "demoVmConfig",
+          "type": "mongodbDatabases",
+          "apiVersion": "2019-08-01",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmodDbName'))]"
+          ],
+
+          "tags": {
+          },
+          "properties": {
+            "resource": {
+              "id": "demoVmConfig"
+            },
+            "options": {
+            }
+          },
+          "resources": [
+            {
+              "name": "config",
+              "type": "collections",
+              "apiVersion": "2019-08-01",
+              "location": "[resourceGroup().location]",
+              "dependsOn": [
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/mongodbDatabases', variables('cosmodDbName'), 'demoVmConfig')]"
+              ],
+              "tags": {
+              },
+              "properties": {
+                "resource": {
+                  "id": "config"
+                },
+                "options": {
+                }
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "type": "Microsoft.Compute/galleries",
@@ -287,7 +305,7 @@
         {
           "type": "images",
           "apiVersion": "2019-03-01",
-          "name": "presales-demo",
+          "name": "[variables('shareImageName')]",
           "location": "[resourceGroup().location]",
           "dependsOn": [
             "[variables('sharedImageGalleryName')]"
@@ -336,9 +354,13 @@
       "type": "string",
       "value": "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'mongo-db-conn-string')]"
     },
+    "vaultId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+    },
     "sharedImageId": {
       "type": "string",
-      "value": "[resourceId('Microsoft.Compute/galleries/images', variables('sharedImageGalleryName'), 'presales-demo')]"
+      "value": "[concat(resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs')), '/sharedgalleries/', variables('dtlSharedImageGalleryName'), '/sharedimages/', variables('shareImageName') )]"
     }
   }
 }

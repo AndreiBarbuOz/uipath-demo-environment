@@ -1,5 +1,7 @@
 # UiPath Demo environment
 
+Create the environment needed to run the UiPath demo VMs found here
+
 ## Installation and prerequisites
 
 ### Installation
