@@ -38,8 +38,8 @@
     "keyVaultName": "[concat(parameters('projectName'), '-kv')]",
     "cosmodDbName": "[concat(parameters('projectName'), '-cdb')]",
     "sharedImageGalleryName": "[concat(parameters('projectName'), '_sig')]",
-    "dtlSharedImageGalleryName": "uipathdemo",
-    "shareImageName": "presales-demo",
+    "dtlSharedImageGalleryName": "[concat(parameters('projectName'), '_sig')]",
+    "shareImageName": "parameters('sharedImageName')",
     "userAssignedIdentity": "[concat(parameters('projectName'), '-msi')]"
   },
   "resources": [
@@ -161,6 +161,27 @@
             "securityToken": "[parameters('gitToken')]",
             "sourceType": "GitHub",
             "status": "Enabled"
+          }
+        },
+        {
+          "type": "microsoft.devtestlab/labs/schedules",
+          "apiVersion": "2018-09-15",
+          "name": "[concat(variables('devTestLabs'), '/labvmsshutdown')]",
+          "location": "westeurope",
+          "dependsOn": [
+            "[resourceId('microsoft.devtestlab/labs', variables('devTestLabs'))]"
+          ],
+          "properties": {
+            "status": "Enabled",
+            "taskType": "LabVmsShutdownTask",
+            "dailyRecurrence": {
+              "time": "0000"
+            },
+            "timeZoneId": "Romance Standard Time",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 30
+            }
           }
         }
       ]
