@@ -8,12 +8,6 @@
     "UiPath"
   ],
   "parameters": {
-    "connectionString": {
-      "type": "string",
-      "defaultValue": "",
-      "displayName": "MongoDB connection string",
-      "description": "Connection string for the MongoDB configuration repository"
-    },
     "username": {
       "type": "string",
       "defaultValue": "",
@@ -29,6 +23,6 @@
   },
   "targetOsType": "Windows",
   "runCommand": {
-    "commandToExecute": "[concat('python ./config.py -c \"', parameters('connectionString'), '\"', ' -u ', parameters('username'), ' -p \"', parameters('password'), '\"') ]"
+    "commandToExecute": "[concat('python ./config.py -p \"', parameters('password'), '\"') ]"
   }
 }

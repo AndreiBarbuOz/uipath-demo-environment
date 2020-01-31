@@ -3,3 +3,4 @@ lab/azuredeploy_dev.parameters.json
 vm/azuredeploy_dev.parameters.json
 \.vscode/*
 Pipfile.lock
+__pycache__
