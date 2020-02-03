@@ -8,21 +8,27 @@
     "UiPath"
   ],
   "parameters": {
-    "username": {
-      "type": "string",
-      "defaultValue": "",
-      "displayName": "Windows user",
-      "description": "username"
-    },
     "password": {
       "type": "string",
       "defaultValue": "",
-      "displayName": "password",
+      "displayName": "Windows password",
       "description": "password"
+    },
+    "ms_account_user": {
+      "type": "string",
+      "defaultValue": "",
+      "displayName": "Microsoft account (e-mail)",
+      "description": "The Microsoft account email from cdx.transform.microsoft.com - DO NOT use your UiPath account or IT gets a heart attack"
+    },
+    "ms_account_pw": {
+      "type": "string",
+      "defaultValue": "",
+      "displayName": "Microsoft account password",
+      "description": "The Microsoft account password from cdx.transform.microsoft.com"
     }
   },
   "targetOsType": "Windows",
   "runCommand": {
-    "commandToExecute": "[concat('python ./config.py -p \"', parameters('password'), '\"') ]"
+    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('--ms_account_pw'), '\"') ]"
   }
 }

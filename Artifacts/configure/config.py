@@ -44,7 +44,6 @@ def get_config(mongoUri):
 def main(args):
     # read/write local config
     local_config = get_local_config(local_config_path)
-    write_local_config(local_config_path, local_config)
     
     # fetch config and connect robot
     config = get_config(local_config['mongoDBConnectionString'])
@@ -52,7 +51,15 @@ def main(args):
     orch = orch_setup.CloudOrchHelper(config['authUrl'], config['clientId'],
                                      config['refreshToken'], config['orchUrl'], config['serviceLogicalName'])
     orch_setup.setup_dsf_folder(
-        orch, args.password, config['processes'], config['assets'])
+        orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], config['assets'])
+
+    local_config['EnvironmentId'] = orch.environment_id
+    local_config['EnvironmentName'] = orch.environment_name
+    local_config['FolderName'] = orch.folder_name
+    local_config['OrganizationUnitID'] = orch.organization_unit_id
+    local_config['SAPUserName'] = orch.sap_user_name
+    local_config['MSAccount'] = args.ms_account_user
+    write_local_config(local_config_path, local_config)
 
 #    uri = get_secret('https://test-vault-presales.vault.azure.net/','mongo-db-conn-string','1a775478f0024c2e9d0b2d48b21fa8bb') 
 
@@ -62,6 +69,8 @@ if __name__ == '__main__':
 
     # Optional argument which requires a parameter (eg. -d test)
     parser.add_argument("-p", "--password", action="store", dest="password")
+    parser.add_argument("--ms_account_user", action="store", dest="ms_account_user")
+    parser.add_argument("--ms_account_pw", action="store", dest="ms_account_pw")
 
     args = parser.parse_args()
     print(args)

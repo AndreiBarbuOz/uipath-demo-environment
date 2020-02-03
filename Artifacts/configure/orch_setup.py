@@ -187,16 +187,10 @@ class CloudOrchHelper:
         print(body)
         print(self.post("/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs", body).json())
 
-
-def setup_dsf_folder(orchHelper, password, process_list, asset_list):
+def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, process_list, asset_list):
     folder_id = orchHelper.create_folder()
-    #folder_id = 2902
-    #orchHelper.organization_unit_id = str(folder_id)
-    #orchHelper.environment_id = 3262
-    #orchHelper.environment_name = "Demo"
 
     (robot_id, user_id) = orchHelper.create_and_connect_robot(password)
-    #robot_id = 2578
     environment_id = orchHelper.create_environment("Demo")
     orchHelper.add_robot_to_environment(robot_id, environment_id)
     role_id = orchHelper.get_role_id("DSF_Robot")
@@ -209,11 +203,20 @@ def setup_dsf_folder(orchHelper, password, process_list, asset_list):
         process_args = process_cfg["Args"]
         version = orchHelper.get_latest_process_version_by_package_name(process_name)
         release_key = orchHelper.publish_release(process_name, version)
-        release_keys.append((release_key, process_args))
+        if process_cfg["Autostart"] == True:
+            release_keys.append((release_key, process_args))
 
     for asset_data in asset_list:
         orchHelper.create_asset(asset_data)
 
+    # ms office account
+    orchHelper.create_asset({
+        "Name": "DSF_MS-Account",
+        "ValueScope": "Global",
+        "ValueType": "Credential",
+        "CredentialUsername": ms_account_user,
+        "CredentialPassword": ms_account_pw
+    })
     # environment assets
 
 
@@ -221,4 +224,5 @@ def setup_dsf_folder(orchHelper, password, process_list, asset_list):
         orchHelper.start_process(release_key, robot_id, process_args.format(orchHelper=orchHelper))
 
 
-
+def setup_dsf_folder_dev(orchHelper, password, ms_account_user, ms_account_pw, process_list, asset_list):
+    orchHelper.organization_unit_id = "2935"
