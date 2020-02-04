@@ -8,6 +8,12 @@
     "UiPath"
   ],
   "parameters": {
+    "username": {
+      "type": "string",
+      "defaultValue": "",
+      "displayName": "Windows username",
+      "description": "Username (required because the artifact runs in a system context)"
+    },
     "password": {
       "type": "string",
       "defaultValue": "",
@@ -29,6 +35,6 @@
   },
   "targetOsType": "Windows",
   "runCommand": {
-    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"') ]"
+    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"') ]"
   }
 }

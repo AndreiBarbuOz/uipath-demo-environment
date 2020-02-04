@@ -44,8 +44,8 @@ def get_config(mongoUri):
 
     return col.find_one({"id": "test"})['configuration']
 
-def copy_sap_config():
-    shutil.copyfile("C:\\Temp\\configFiles\\SAPUILandscape.xml", os.getenv('APPDATA') + "\\" + "SAP\\Common\\SAPUILandscape.xml")
+def copy_sap_config(username):
+    shutil.copyfile("C:\\Temp\\configFiles\\SAPUILandscape.xml", "c:\\Users\\" + username + "\\" + "AppData\\Roaming\\SAP\\Common\\SAPUILandscape.xml")
     
 def main(args):
     # read/write local config
@@ -57,14 +57,14 @@ def main(args):
 
     # fetch config and connect robot
     config = get_config(local_config['mongoDBConnectionString'])
-    print(config)
-    orch = orch_setup.CloudOrchHelper(config['authUrl'], config['clientId'],
+    orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
                                      config['refreshToken'], config['orchUrl'], config['serviceLogicalName'])
     orch_setup.setup_dsf_folder(
         orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], config['assets'])
 
     # copy sap config
-    copy_sap_config()
+    print(orch.username)
+    copy_sap_config(orch.username)
 
     local_config['EnvironmentId'] = orch.environment_id
     local_config['EnvironmentName'] = orch.environment_name
@@ -81,12 +81,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Configure UiPath Robot")
 
     # Optional argument which requires a parameter (eg. -d test)
+    parser.add_argument("-u", "--username", action="store", dest="username")
     parser.add_argument("-p", "--password", action="store", dest="password")
     parser.add_argument("--ms_account_user", action="store", dest="ms_account_user")
     parser.add_argument("--ms_account_pw", action="store", dest="ms_account_pw")
 
     args = parser.parse_args()
-    print(args)
     main(args)
 
 

@@ -3,7 +3,7 @@ import os
 import getpass
 
 class CloudOrchHelper:
-    def __init__(self, auth_url, client_id, refresh_token, orch_url, service_logical_name):
+    def __init__(self, username, auth_url, client_id, refresh_token, orch_url, service_logical_name):
         self.refresh_token = refresh_token
         self.client_id = client_id
         self.auth_url = auth_url.rstrip("/")
@@ -17,7 +17,7 @@ class CloudOrchHelper:
         # note: sap user name has to be 12 chars max so we make it unique by using the env id
         self.sap_user_name = None
 
-        self.username = getpass.getuser()
+        self.username = username
         self.machine_name = os.environ['COMPUTERNAME']
         self.robot_name = (self.machine_name + '_' + self.username)[0:19]
         self.full_username = self.machine_name + '\\' + self.username
