@@ -3,27 +3,28 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "sharedImageId": {
-      "value": "/subscriptions/111111111111111/resourceGroups/<resource-group>/providers/Microsoft.DevTestLab/labs/<devtest-lab>/sharedgalleries/<shared-gallery>/sharedimages/<image-name>"
-    },          
+      "value": "/subscriptions/99f4fcd9-845e-420b-8f7b-bc9f4e5fbde3/resourcegroups/presales-ce-internal-automation/providers/microsoft.devtestlab/labs/dsfs-dtl/sharedgalleries/dsfs_sig/sharedimages/presales-demo"
+    },
     "labName": {
-      "value": "<lab-name>"
+      "value": "dsfs-dtl"
+    },
+    "labSubnetName": {
+      "value": "dsfs-subnet"
     },
     "newVMName": {
-      "value": "<vm-name>"
+      "value": "sreutter001"
     },
     "userName": {
-      "value": "<username>"
+      "value": "uipath"
     },
     "password": {
-      "value": "<password>"
+      "value": "%f9NungC0&vSf6%KJE52h"
     },
-    "mongoDbConnectionString": {
-      "reference": {
-        "keyVault": {
-          "id": "/subscriptions/111111111/resourceGroups/<resource-group>/providers/Microsoft.KeyVault/vaults/dsf-kv"
-        },       
-        "secretName": "mongo-db-conn-string"
-      }
+    "ms_account_user": {
+      "value": "meganb@M365x692512.onmicrosoft.com"
+    },
+    "ms_account_pw": {
+      "value": "UqFwk6m5fK"
     }
   }
 }

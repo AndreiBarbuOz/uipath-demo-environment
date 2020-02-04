@@ -3,13 +3,19 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "tenantId": {
-      "value": "11111111-2222-3333-4444-555555555555"
+      "value": "d8353d2a-b153-4d17-8827-902c51f72357"
     },
     "objectId": {
-      "value": "11111111-2222-3333-4444-555555555555"
+      "value": "476ea012-a8d4-471c-b9b0-e0703a2000d7"
     },
     "gitToken": {
-      "value": "111111111111111111111111111111111111111"
+      "value": "ee635c11bd4684dd5453bc8a1c76d12e2216e1f8"
+    },
+    "projectName": {
+      "value": "dsfs"
+    },
+    "sharedImageName": {
+      "value": "presales-demo"
     }
   }
 }

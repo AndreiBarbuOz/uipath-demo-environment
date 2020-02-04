@@ -14,6 +14,9 @@
         "description": "The name of an existing lab where the new vm will be created."
       }
     },
+    "labSubnetName": {
+      "type": "string"
+    },
     "sharedImageId": {
       "type": "string",
       "metadata": {
@@ -26,12 +29,15 @@
     "password": {
       "type": "string"
     },
-    "mongoDbConnectionString": {
+    "ms_account_user": {
+      "type": "string"
+    },
+    "ms_account_pw": {
       "type": "string"
     }
   },
   "variables": {
-    "labSubnetName": "dsf-subnet",
+    "labSubnetName": "[parameters('labSubnetName')]",
     "resourceName": "[concat(parameters('labName'), '/', parameters('newVMName'))]",
     "labVirtualNetworkId": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('labName'), variables('labVirtualNetworkName'))]",
     "labVirtualNetworkName": "DevTest Lab VNet"
@@ -39,7 +45,7 @@
   "resources": [
     {
       "apiVersion": "2018-10-15-preview",
-      "type": "Microsoft.DevTestLab/labs/virtualMachines",
+      "type": "Microsoft.DevTestLab/labs/virtualmachines",
       "name": "[variables('resourceName')]",
       "location": "[resourceGroup().location]",
       "properties": {
@@ -54,20 +60,20 @@
         "storageType": "StandardSSD",
         "disallowPublicIpAddress": false,
         "tags": {
-          "Owner": "andrei.barbu@uipath.com",
-          "Project": "PreSalesCloud"
+          "Owner": "stefan.reutter@uipath.com",
+          "Project": "DSF"
         },
         "artifacts": [
           {
-            "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('labName'), 'UipathArtifacts', 'configure')]",
+            "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('labName'), 'UiPathArtifacts', 'configure')]",
             "parameters": [
               {
-                "name": "connectionString",
-                "value": "[parameters('mongoDbConnectionString')]"
+                "name": "ms_account_user",
+                "value": "[parameters('ms_account_user')]"
               },
               {
-                "name": "username",
-                "value": "[parameters('userName')]"
+                "name": "ms_account_pw",
+                "value": "[parameters('ms_account_pw')]"
               },
               {
                 "name": "password",

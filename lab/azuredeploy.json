@@ -26,6 +26,12 @@
       "metadata": {
         "description": "Git Token to access artifact for devtest labs"
       }
+    },
+    "sharedImageName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for the shared image"
+      }
     }
   },
   "variables": {
@@ -39,7 +45,7 @@
     "cosmodDbName": "[concat(parameters('projectName'), '-cdb')]",
     "sharedImageGalleryName": "[concat(parameters('projectName'), '_sig')]",
     "dtlSharedImageGalleryName": "[concat(parameters('projectName'), '_sig')]",
-    "shareImageName": "parameters('sharedImageName')",
+    "shareImageName": "[parameters('sharedImageName')]",
     "userAssignedIdentity": "[concat(parameters('projectName'), '-msi')]"
   },
   "resources": [
@@ -148,7 +154,7 @@
         },
         {
           "apiVersion": "2018-10-15-preview",
-          "name": "UipathArtifacts",
+          "name": "UiPathArtifacts",
           "type": "artifactSources",
           "dependsOn": [
             "[resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs'))]"
@@ -156,7 +162,7 @@
           "properties": {
             "uri": "https://github.com/AndreiBarbuOz/uipath-demo-environment.git",
             "folderPath": "/Artifacts",
-            "branchRef": "master",
+            "branchRef": "stefan",
             "displayName": "Configuration",
             "securityToken": "[parameters('gitToken')]",
             "sourceType": "GitHub",
@@ -167,9 +173,9 @@
           "type": "microsoft.devtestlab/labs/schedules",
           "apiVersion": "2018-09-15",
           "name": "[concat(variables('devTestLabs'), '/labvmsshutdown')]",
-          "location": "westeurope",
+          "location": "[resourceGroup().location]",
           "dependsOn": [
-            "[resourceId('microsoft.devtestlab/labs', variables('devTestLabs'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs'))]"
           ],
           "properties": {
             "status": "Enabled",
@@ -335,18 +341,18 @@
             "osType": "Windows",
             "osState": "Generalized",
             "identifier": {
-              "publisher": "Uipath",
+              "publisher": "UiPath",
               "offer": "uipath-presales-demo",
               "sku": "presales-demo"
             },
             "recommended": {
               "vCPUs": {
-                "min": 16,
-                "max": 64
+                "min": 2,
+                "max": 4
               },
               "memory": {
-                "min": 500,
-                "max": 1024
+                "min": 8,
+                "max": 16
               }
             }
           }
