@@ -44,9 +44,6 @@ def get_config(mongoUri):
 
     return col.find_one({"id": "test"})['configuration']
 
-def copy_sap_config(username):
-    shutil.copyfile("C:\\Temp\\configFiles\\SAPUILandscape.xml", "c:\\Users\\" + username + "\\" + "AppData\\Roaming\\SAP\\Common\\SAPUILandscape.xml")
-    
 def main(args):
     # read/write local config
     local_config = get_local_config(local_config_path)
@@ -62,9 +59,6 @@ def main(args):
     orch_setup.setup_dsf_folder(
         orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], config['assets'])
 
-    # copy sap config
-    print(orch.username)
-    copy_sap_config(args.username)
 
     local_config['EnvironmentId'] = orch.environment_id
     local_config['EnvironmentName'] = orch.environment_name
