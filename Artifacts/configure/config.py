@@ -64,7 +64,7 @@ def main(args):
 
     # copy sap config
     print(orch.username)
-    copy_sap_config(orch.username)
+    copy_sap_config(args.username)
 
     local_config['EnvironmentId'] = orch.environment_id
     local_config['EnvironmentName'] = orch.environment_name

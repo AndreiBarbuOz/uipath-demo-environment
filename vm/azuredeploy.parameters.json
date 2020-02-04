@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "sharedImageId": {
-      "value": "/subscriptions/99f4fcd9-845e-420b-8f7b-bc9f4e5fbde3/resourcegroups/presales-ce-internal-automation/providers/microsoft.devtestlab/labs/dsfs-dtl/sharedgalleries/dsfs_sig/sharedimages/presales-demo"
+      "value": "/subscriptions/<sub>/resourcegroups/<rg>/providers/microsoft.devtestlab/labs/<dtl>/sharedgalleries/<sig>/sharedimages/<image>"
     },
     "labName": {
       "value": "dsfs-dtl"
@@ -15,16 +15,16 @@
       "value": "sreutter001"
     },
     "userName": {
-      "value": "uipath"
+      "value": "<user>"
     },
     "password": {
-      "value": "%f9NungC0&vSf6%KJE52h"
+      "value": "<pw>"
     },
     "ms_account_user": {
-      "value": "meganb@M365x692512.onmicrosoft.com"
+      "value": "<microsoft email>"
     },
     "ms_account_pw": {
-      "value": "UqFwk6m5fK"
+      "value": "<microsoft pw>"
     }
   }
 }

@@ -3,16 +3,16 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "tenantId": {
-      "value": "d8353d2a-b153-4d17-8827-902c51f72357"
+      "value": "tenant id for the subscription"
     },
     "objectId": {
-      "value": "476ea012-a8d4-471c-b9b0-e0703a2000d7"
+      "value": "vault owner object id"
     },
     "gitToken": {
-      "value": "ee635c11bd4684dd5453bc8a1c76d12e2216e1f8"
+      "value": "git token"
     },
     "projectName": {
-      "value": "dsfs"
+      "value": "dsf"
     },
     "sharedImageName": {
       "value": "presales-demo"
