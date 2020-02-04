@@ -29,6 +29,6 @@
   },
   "targetOsType": "Windows",
   "runCommand": {
-    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('--ms_account_pw'), '\"') ]"
+    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"') ]"
   }
 }

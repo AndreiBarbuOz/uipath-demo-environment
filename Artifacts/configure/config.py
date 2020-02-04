@@ -7,6 +7,7 @@ import subprocess
 import argparse
 import json
 import os
+import time
 import shutil
 
 from msrestazure.azure_active_directory import MSIAuthentication
@@ -44,12 +45,16 @@ def get_config(mongoUri):
     return col.find_one({"id": "test"})['configuration']
 
 def copy_sap_config():
-    shutil.copyfile("C:\\Temp\\configFiles\\SAPUILandscape.xml", os.getenv('APPDATA') + "\\" + "SAP\Common\SAPUILandscape.xml")
+    shutil.copyfile("C:\\Temp\\configFiles\\SAPUILandscape.xml", os.getenv('APPDATA') + "\\" + "SAP\\Common\\SAPUILandscape.xml")
     
 def main(args):
     # read/write local config
     local_config = get_local_config(local_config_path)
     
+    # start robot service
+    os.system("sc.exe start UiRobotSvc")
+    time.sleep(15)
+
     # fetch config and connect robot
     config = get_config(local_config['mongoDBConnectionString'])
     print(config)
