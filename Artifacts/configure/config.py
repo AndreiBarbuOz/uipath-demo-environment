@@ -6,6 +6,8 @@ from pymongo import MongoClient
 import subprocess
 import argparse
 import json
+import os
+import shutil
 
 from msrestazure.azure_active_directory import MSIAuthentication
 from azure.mgmt.resource import ResourceManagementClient, SubscriptionClient
@@ -40,6 +42,9 @@ def get_config(mongoUri):
     col = client.demoVmConfig['config']
 
     return col.find_one({"id": "test"})['configuration']
+
+def copy_sap_config():
+    shutil.copyfile("C:\\Temp\\configFiles\\SAPUILandscape.xml", os.getenv('APPDATA') + "\\" + "SAP\Common\SAPUILandscape.xml")
     
 def main(args):
     # read/write local config
@@ -52,6 +57,9 @@ def main(args):
                                      config['refreshToken'], config['orchUrl'], config['serviceLogicalName'])
     orch_setup.setup_dsf_folder(
         orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], config['assets'])
+
+    # copy sap config
+    copy_sap_config()
 
     local_config['EnvironmentId'] = orch.environment_id
     local_config['EnvironmentName'] = orch.environment_name
