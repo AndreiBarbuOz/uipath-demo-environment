@@ -78,6 +78,10 @@
               {
                 "name": "password",
                 "value": "[parameters('password')]"
+              },
+              {
+                "name": "username",
+                "value": "[parameters('username')]"
               }
             ]
           }
