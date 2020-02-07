@@ -201,7 +201,8 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
     for process_cfg in process_list:
         process_name = process_cfg["Name"]
         process_args = process_cfg["Args"]
-        version = orchHelper.get_latest_process_version_by_package_name(process_name)
+        version = process_cfg["Version"] if "Version" in process_cfg else orchHelper.get_latest_process_version_by_package_name(
+            process_name)
         release_key = orchHelper.publish_release(process_name, version)
         if process_cfg["Autostart"] == True:
             release_keys.append((release_key, process_args, process_cfg["Autostart"]))
