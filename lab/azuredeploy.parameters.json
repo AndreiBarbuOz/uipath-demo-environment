@@ -16,6 +16,21 @@
     },
     "sharedImageName": {
       "value": "presales-demo"
+    },
+    "artifactRepo": {
+      "value": "https://github.com/AndreiBarbuOz/uipath-demo-environment.git"
+    },
+    "artifactBranch": {
+      "value": "master"
+    },
+    "artifactFolderPath": {
+      "value": "/Artifacts"
+    },
+    "autoShutdownPolicyTime": {
+      "value": "0000"
+    },
+    "location": {
+      "value": "westeurope"
     }
   }
 }

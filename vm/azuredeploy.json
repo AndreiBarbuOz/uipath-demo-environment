@@ -8,6 +8,15 @@
         "description": "The name of the new vm to be created."
       }
     },
+    "newVMSize": {
+      "type": "string"
+    },
+    "projectName": {
+      "type": "string"
+    },
+    "ownerEmail": {
+      "type": "string"
+    },
     "labName": {
       "type": "string",
       "metadata": {
@@ -23,6 +32,10 @@
         "description": "The id of an existing custom image which will be used to create the new vm. The specified image must exist in the lab (identified via the 'existingLabName' parameter)."
       }
     },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
     "userName": {
       "type": "string"
     },
@@ -34,6 +47,12 @@
     },
     "ms_account_pw": {
       "type": "string"
+    },
+    "autoarmProcesses": {
+      "type": "string",
+      "metadata": {
+        "description": "Comma-separated list of processes to automatically arm when provisioning the VM"
+      }
     }
   },
   "variables": {
@@ -47,21 +66,21 @@
       "apiVersion": "2018-10-15-preview",
       "type": "Microsoft.DevTestLab/labs/virtualmachines",
       "name": "[variables('resourceName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "properties": {
         "sharedImageId": "[parameters('sharedImageId')]",
         "labVirtualNetworkId": "[variables('labVirtualNetworkId')]",
         "labSubnetName": "[variables('labSubnetName')]",
         "notes": "presales-demo",
-        "size": "Standard_D4s_v3",
+        "size": "[parameters('newVMSize')]",
         "userName": "[parameters('userName')]",
         "password": "[parameters('password')]",
         "isAuthenticationWithSshKey": false,
         "storageType": "StandardSSD",
         "disallowPublicIpAddress": false,
         "tags": {
-          "Owner": "stefan.reutter@uipath.com",
-          "Project": "DSF"
+          "Owner": "[parameters('ownerEmail')]",
+          "Project": "[parameters('projectName')]"
         },
         "artifacts": [
           {
@@ -82,6 +101,10 @@
               {
                 "name": "username",
                 "value": "[parameters('username')]"
+              },
+              {
+                "name": "autoarm_processes",
+                "value": "[parameters('autoarmProcesses')]"
               }
             ]
           }

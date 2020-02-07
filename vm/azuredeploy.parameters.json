@@ -12,7 +12,16 @@
       "value": "dsfs-subnet"
     },
     "newVMName": {
-      "value": "sreutter001"
+      "value": "myvm001"
+    },
+    "newVMSize": {
+      "value": "Standard_D4s_v3"
+    },
+    "ownerEmail": {
+      "value": "<your email>"
+    },
+    "projectName": {
+      "value": "DSF"
     },
     "userName": {
       "value": "<user>"
@@ -25,6 +34,12 @@
     },
     "ms_account_pw": {
       "value": "<microsoft pw>"
+    },
+    "location": {
+      "value": "West Europe"
+    },
+    "autoarmProcesses": {
+      "value": "Invoice2SAP"
     }
   }
 }
