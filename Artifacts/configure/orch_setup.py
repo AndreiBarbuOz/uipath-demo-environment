@@ -196,6 +196,7 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
     orchHelper.assign_user_role(user_id, role_id)
     
     release_keys = []
+    autoarm_release_keys = []
 
     for process_cfg in process_list:
         process_name = process_cfg["Name"]
@@ -203,7 +204,9 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
         version = orchHelper.get_latest_process_version_by_package_name(process_name)
         release_key = orchHelper.publish_release(process_name, version)
         if process_cfg["Autostart"] == True:
-            release_keys.append((release_key, process_args))
+            release_keys.append((release_key, process_args, process_cfg["Autostart"]))
+        if process_name in autoarm_list:
+            autoarm_release_keys.append(release_key)
 
     for asset_data in asset_list:
         orchHelper.create_asset(asset_data)
@@ -216,11 +219,15 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
         "CredentialUsername": ms_account_user,
         "CredentialPassword": ms_account_pw
     })
-    # environment assets
 
 
+    # autostart by default
     for (release_key, process_args) in release_keys:
         orchHelper.start_process(release_key, robot_id, process_args.format(orchHelper=orchHelper))
+
+    # auto-arm based on arguments
+    for release_key in autoarm_release_keys:
+        orchHelper.start_process(release_key, robot_id, "{'Mode': 'arm'}")
 
 
 def setup_dsf_folder_dev(orchHelper, password, ms_account_user, ms_account_pw, process_list, autoarm_list, asset_list):
