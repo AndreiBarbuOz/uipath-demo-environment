@@ -34,7 +34,6 @@ class CloudOrchHelper:
                 "refresh_token": self.refresh_token,
                 "client_id": self.client_id}
         r = requests.post(self.auth_url + "/oauth/token", json=body)
-        print(r.json())
         return r.json()['access_token']
 
     def _get_default_headers(self):

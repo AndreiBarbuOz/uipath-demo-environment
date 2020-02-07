@@ -35,12 +35,13 @@
     "autoarm_processes": {
       "type": "array",
       "defaultValue": [],
+      "allowEmpty": true,
       "displayName": "Auto-arm demos",
       "description": "Demo processes for which you want to automatically run the arming procedure"
     }
   },
   "targetOsType": "Windows",
   "runCommand": {
-    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"') ]"
+    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm ', parameters('autoarm_processes')) ]"
   }
 }
