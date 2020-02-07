@@ -52,12 +52,14 @@ def main(args):
     os.system("sc.exe start UiRobotSvc")
     time.sleep(15)
 
+    # translate arguments
+    autoarm_list = json.loads(args.autoarm)
     # fetch config and connect robot
     config = get_config(local_config['mongoDBConnectionString'])
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
                                      config['refreshToken'], config['orchUrl'], config['serviceLogicalName'])
     orch_setup.setup_dsf_folder_dev(
-        orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], args.autoarm, config['assets'])
+        orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], autoarm_list, config['assets'])
 
 
     local_config['EnvironmentId'] = orch.environment_id
