@@ -31,6 +31,12 @@
       "defaultValue": "",
       "displayName": "Microsoft account password",
       "description": "The Microsoft account password from cdx.transform.microsoft.com"
+    },
+    "autoarm_processes": {
+      "type": "array",
+      "defaultValue": [],
+      "displayName": "Auto-arm demos",
+      "description": "Demo processes for which you want to automatically run the arming procedure"
     }
   },
   "targetOsType": "Windows",

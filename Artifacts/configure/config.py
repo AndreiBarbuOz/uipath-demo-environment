@@ -56,8 +56,8 @@ def main(args):
     config = get_config(local_config['mongoDBConnectionString'])
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
                                      config['refreshToken'], config['orchUrl'], config['serviceLogicalName'])
-    orch_setup.setup_dsf_folder(
-        orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], config['assets'])
+    orch_setup.setup_dsf_folder_dev(
+        orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], args.autoarm, config['assets'])
 
 
     local_config['EnvironmentId'] = orch.environment_id
@@ -79,6 +79,7 @@ if __name__ == '__main__':
     parser.add_argument("-p", "--password", action="store", dest="password")
     parser.add_argument("--ms_account_user", action="store", dest="ms_account_user")
     parser.add_argument("--ms_account_pw", action="store", dest="ms_account_pw")
+    parser.add_argument("--autoarm", action="store", dest="autoarm")
 
     args = parser.parse_args()
     main(args)

@@ -187,7 +187,7 @@ class CloudOrchHelper:
         print(body)
         print(self.post("/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs", body).json())
 
-def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, process_list, asset_list):
+def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, process_list, autoarm_list, asset_list):
     folder_id = orchHelper.create_folder()
 
     (robot_id, user_id) = orchHelper.create_and_connect_robot(password)
@@ -224,5 +224,5 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
         orchHelper.start_process(release_key, robot_id, process_args.format(orchHelper=orchHelper))
 
 
-def setup_dsf_folder_dev(orchHelper, password, ms_account_user, ms_account_pw, process_list, asset_list):
-    orchHelper.organization_unit_id = "2935"
+def setup_dsf_folder_dev(orchHelper, password, ms_account_user, ms_account_pw, process_list, autoarm_list, asset_list):
+    print(autoarm_list)
