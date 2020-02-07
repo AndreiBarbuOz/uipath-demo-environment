@@ -41,7 +41,7 @@
     }
   },
   "targetOsType": "Windows",
-  "runCommand": {
+  "runCommand": { 
     "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', string(parameters('autoarm_processes')), '\"') ]"
   }
 }
