@@ -53,12 +53,12 @@ def main(args):
     time.sleep(15)
 
     # translate arguments
-    autoarm_list = json.loads(args.autoarm)
+    autoarm_list = args.autoarm.split(",")
     # fetch config and connect robot
     config = get_config(local_config['mongoDBConnectionString'])
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
                                      config['refreshToken'], config['orchUrl'], config['serviceLogicalName'])
-    orch_setup.setup_dsf_folder_dev(
+    orch_setup.setup_dsf_folder(
         orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], autoarm_list, config['assets'])
 
 

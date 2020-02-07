@@ -33,15 +33,14 @@
       "description": "The Microsoft account password from cdx.transform.microsoft.com"
     },
     "autoarm_processes": {
-      "type": "array",
-      "defaultValue": [],
-      "allowEmpty": true,
+      "type": "string",
+      "defaultValue": "",
       "displayName": "Auto-arm demos",
-      "description": "Demo processes for which you want to automatically run the arming procedure"
+      "description": "Demo processes for which you want to automatically run the arming procedure. Use a comma-separated list"
     }
   },
   "targetOsType": "Windows",
   "runCommand": { 
-    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', string(parameters('autoarm_processes')), '\"') ]"
+    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', parameters('autoarm_processes'), '\"') ]"
   }
 }
