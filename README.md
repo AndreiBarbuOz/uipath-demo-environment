@@ -17,3 +17,9 @@ az group deployment show --name <deployment-name> --resource-group <rg-name> --q
 
 Use these values to fill in the parameters required in `vm/azuredeploy.parameters.json`
 
+### Create VM
+
+```bash
+az group deployment create --resource-group <rg-name> --template-file lab/azuredeploy.json --name <deployment-name> --parameters lab/azuredeploy.parameters.json
+```
+
