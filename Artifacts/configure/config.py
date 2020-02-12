@@ -49,19 +49,20 @@ def main(args):
     local_config = get_local_config(local_config_path)
     
     # start robot service
-    os.system("sc.exe start UiRobotSvc")
-    time.sleep(15)
+    # TODO: enable
+    #os.system("sc.exe start UiRobotSvc")
+    #time.sleep(15)
 
     # translate arguments
     autoarm_list = args.autoarm.split(",")
     # fetch config and connect robot
     config = get_config(local_config['mongoDBConnectionString'])
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
-                                     config['refreshToken'], config['orchUrl'], config['serviceLogicalName'])
+                                     config['refreshToken'], config['orchUrl'], config['serviceLogicalName'], config['accountName'])
     orch_setup.setup_dsf_folder(
-        orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], autoarm_list, config['assets'])
+        orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], autoarm_list, config['assets'], config['roles'])
 
-
+    #del local_config['mongoDBConnectionString']
     local_config['EnvironmentId'] = orch.environment_id
     local_config['EnvironmentName'] = orch.environment_name
     local_config['FolderName'] = orch.folder_name
@@ -70,7 +71,6 @@ def main(args):
     local_config['MSAccount'] = args.ms_account_user
     write_local_config(local_config_path, local_config)
 
-#    uri = get_secret('https://test-vault-presales.vault.azure.net/','mongo-db-conn-string','1a775478f0024c2e9d0b2d48b21fa8bb') 
 
 if __name__ == '__main__': 
     """ This is executed when run from the command line """
