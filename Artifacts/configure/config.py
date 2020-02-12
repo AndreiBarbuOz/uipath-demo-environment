@@ -49,9 +49,9 @@ def main(args):
     local_config = get_local_config(local_config_path)
     
     # start robot service
-    # TODO: enable
-    #os.system("sc.exe start UiRobotSvc")
-    #time.sleep(15)
+    
+    os.system("sc.exe start UiRobotSvc")
+    time.sleep(15)
 
     # translate arguments
     autoarm_list = args.autoarm.split(",")
@@ -62,7 +62,7 @@ def main(args):
     orch_setup.setup_dsf_folder(
         orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], autoarm_list, config['assets'], config['roles'])
 
-    #del local_config['mongoDBConnectionString']
+    del local_config['mongoDBConnectionString']
     local_config['EnvironmentId'] = orch.environment_id
     local_config['EnvironmentName'] = orch.environment_name
     local_config['FolderName'] = orch.folder_name

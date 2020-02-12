@@ -1,5 +1,6 @@
 import requests
 import os
+import time
 import getpass
 
 class CloudOrchHelper:
@@ -180,6 +181,7 @@ class CloudOrchHelper:
 
     def _get_folder_id(self, folder_name):
         r = self.get(f"/odata/Folders?$filter=DisplayName eq '{folder_name}'")
+        print(r.json())
         return r.json()['value'][0]['Id']
 
     def _adjust_user_folders(self, user_email):
@@ -197,7 +199,7 @@ class CloudOrchHelper:
             self._add_user_to_service(service_id, user_id, roles)
         else:
             self._invite_user(account_user_id, service_id, user_email, roles)
-
+        time.sleep(3)
         self._adjust_user_folders(user_email)
     
             
