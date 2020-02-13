@@ -356,6 +356,14 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
         "CredentialPassword": ms_account_pw
     })
 
+    # unique username
+    orchHelper.create_asset({
+        "Name": "DSF_UniqueUser",
+        "ValueScope": "Global",
+        "ValueType": "Text",
+        "StringValue": orchHelper.sap_user_name
+    })
+
 
     # autostart by default
     for (release_key, process_args) in release_keys:

@@ -18,6 +18,7 @@ import orch_setup
 
 
 local_config_path = 'c:\\UiPath\\config\\dsf.json'
+temp_config_path = 'c:\\Temp\\configFiles'
 
 def get_secret(key_vault, key_name, key_version):
     # Create MSI Authentication
@@ -62,12 +63,13 @@ def main(args):
     orch_setup.setup_dsf_folder(
         orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], autoarm_list, config['assets'], config['roles'])
 
+    # disable sounds
+    os.system(f"reg import {temp_config_path}\disableSounds.reg")
+
     del local_config['mongoDBConnectionString']
-    local_config['EnvironmentId'] = orch.environment_id
-    local_config['EnvironmentName'] = orch.environment_name
     local_config['FolderName'] = orch.folder_name
     local_config['OrganizationUnitID'] = orch.organization_unit_id
-    local_config['SAPUserName'] = orch.sap_user_name
+    local_config['UniqueUser'] = orch.sap_user_name
     local_config['MSAccount'] = args.ms_account_user
     write_local_config(local_config_path, local_config)
 
