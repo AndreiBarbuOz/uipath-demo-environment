@@ -367,7 +367,7 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
 
     # autostart by default
     for (release_key, process_args) in release_keys:
-        orchHelper.start_process(release_key, robot_id, process_args.format(orchHelper=orchHelper))
+        orchHelper.start_process(release_key, robot_id, process_args)
 
     # auto-arm based on arguments
     for release_key in autoarm_release_keys:
