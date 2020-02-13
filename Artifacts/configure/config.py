@@ -63,8 +63,6 @@ def main(args):
     orch_setup.setup_dsf_folder(
         orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], autoarm_list, config['assets'], config['roles'])
 
-    # disable sounds
-    os.system(f"reg import {temp_config_path}\disableSounds.reg")
 
     del local_config['mongoDBConnectionString']
     local_config['FolderName'] = orch.folder_name
