@@ -214,7 +214,9 @@ class CloudOrchHelper:
                 "Password": password,
                 "Type": "Development",
                 "ExecutionSettings": {
-                    "LoginToConsole": False
+                    "LoginToConsole": False,
+                    "ResolutionWidth": "1920", 
+                    "ResolutionHeight": "1080"
                 }
             }
         r = self.post("/odata/Robots", body)
