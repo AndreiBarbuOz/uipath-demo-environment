@@ -7,7 +7,7 @@
     "subnetName": "Subnet",
     "subnetPrefix": "10.0.0.0/24",
     "publicIPAddressName": "[concat(uniquestring(resourceGroup().id), 'myPublicIP')]",
-    "virtualNetworkName": "MyVNET",
+    "virtualNetworkName": "MyVNET"
   },
   "resources": [
     {
