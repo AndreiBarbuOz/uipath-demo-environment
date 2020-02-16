@@ -1,6 +1,6 @@
 {
-    "itemDisplayName": "Install Orchestrator",
-    "description": "This template creates an Orchestrator VM",
-    "githubUsername": "tadrian88",
-    "summary": "Deploys an Orchestrator instance as an environment in a DevTest Lab."
+    "itemDisplayName": "Presales Demo",
+    "description": "Deploy a presales demo VM",
+    "githubUsername": "AndreiBarbuOz",
+    "summary": "Deploy a presales demo VM inside the devtest lab"
 }
