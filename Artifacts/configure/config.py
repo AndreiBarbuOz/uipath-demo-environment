@@ -18,6 +18,7 @@ import orch_setup
 
 
 local_config_path = 'c:\\UiPath\\config\\dsf.json'
+temp_config_path = 'c:\\Temp\\configFiles'
 
 def get_secret(key_vault, key_name, key_version):
     # Create MSI Authentication
@@ -49,6 +50,7 @@ def main(args):
     local_config = get_local_config(local_config_path)
     
     # start robot service
+    
     os.system("sc.exe start UiRobotSvc")
     time.sleep(15)
 
@@ -57,20 +59,18 @@ def main(args):
     # fetch config and connect robot
     config = get_config(local_config['mongoDBConnectionString'])
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
-                                     config['refreshToken'], config['orchUrl'], config['serviceLogicalName'])
+                                     config['refreshToken'], config['orchUrl'], config['serviceLogicalName'], config['accountName'])
     orch_setup.setup_dsf_folder(
-        orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], autoarm_list, config['assets'])
+        orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], autoarm_list, config['assets'], config['roles'])
 
 
-    local_config['EnvironmentId'] = orch.environment_id
-    local_config['EnvironmentName'] = orch.environment_name
+    del local_config['mongoDBConnectionString']
     local_config['FolderName'] = orch.folder_name
     local_config['OrganizationUnitID'] = orch.organization_unit_id
-    local_config['SAPUserName'] = orch.sap_user_name
+    local_config['UniqueUser'] = orch.sap_user_name
     local_config['MSAccount'] = args.ms_account_user
     write_local_config(local_config_path, local_config)
 
-#    uri = get_secret('https://test-vault-presales.vault.azure.net/','mongo-db-conn-string','1a775478f0024c2e9d0b2d48b21fa8bb') 
 
 if __name__ == '__main__': 
     """ This is executed when run from the command line """

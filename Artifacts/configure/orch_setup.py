@@ -1,19 +1,24 @@
 import requests
 import os
+import time
 import getpass
 
 class CloudOrchHelper:
-    def __init__(self, username, auth_url, client_id, refresh_token, orch_url, service_logical_name):
+    def __init__(self, username, auth_url, client_id, refresh_token, orch_url, service_logical_name, account_name):
         self.refresh_token = refresh_token
         self.client_id = client_id
         self.auth_url = auth_url.rstrip("/")
         self.service_logical_name = service_logical_name
+        self.account_name = account_name
         self.orch_url = orch_url.rstrip("/")
 
         # filled in later
+        self.access_token = None
+        self.id_token = None
         self.organization_unit_id = None
         self.environment_id = None
         self.environment_name = None
+        self.user_id = None
         # note: sap user name has to be 12 chars max so we make it unique by using the env id
         self.sap_user_name = None
 
@@ -34,7 +39,10 @@ class CloudOrchHelper:
                 "refresh_token": self.refresh_token,
                 "client_id": self.client_id}
         r = requests.post(self.auth_url + "/oauth/token", json=body)
-        return r.json()['access_token']
+        r = r.json()
+        self.access_token = r['access_token']
+        self.id_token = r['id_token']
+        return r['access_token']
 
     def _get_default_headers(self):
         return {"X-UIPATH-TenantName": self.service_logical_name,
@@ -52,7 +60,7 @@ class CloudOrchHelper:
         return requests.get(self._getAbsoluteEndpoint(relative_endpoint), headers=headers)
 
     def login(self):
-        self.access_token = self._get_access_token()
+        self._get_access_token()
 
     def _create_folder(self, foldername):
         print("Creating folder")
@@ -69,6 +77,132 @@ class CloudOrchHelper:
         self.sap_user_name = "DSF_" + self.organization_unit_id 
         return str(r["Id"])
 
+    def _get_my_account_user_id(self):
+        headers = {"Authorization": "Bearer " + self.id_token}
+        body = {'guid': None}
+        r = requests.post(self._getAbsoluteEndpoint(
+            '/portal_/api/profile/getLoggedInUser'), json=body, headers=headers)
+        r = r.json()
+        my_account = [acc for acc in r if acc['accountUserDto']['accountLogicalName'] == self.account_name][0]
+        return my_account['accountUserDto']['id']
+
+    def _get_all_services(self, account_user_id):
+        headers = {"Authorization": "Bearer " + self.id_token}
+        body = {'accountUserId': account_user_id}
+        r = requests.post(self._getAbsoluteEndpoint(
+            f'/{self.account_name}/portal_/api/serviceInstance/services'), json=body, headers=headers)
+        r = r.json()
+        return r
+    
+    def _get_all_users(self, account_user_id):
+        headers = {"Authorization": "Bearer " + self.id_token}
+        body = {'accountUserId': account_user_id}
+        r = requests.post(self._getAbsoluteEndpoint(
+            f'/{self.account_name}/portal_/api/users'), json=body, headers=headers)
+        r = r.json()
+        return r
+    
+    def _get_user_id_account(self, account_user_id, user_email):
+        all_users = self._get_all_users(account_user_id)
+        my_users = [usr for usr in all_users if usr['emailId'] == user_email]
+        if len(my_users) > 0:
+            return my_users[0]['id']
+        else:
+            return None
+
+    def _get_my_service_id(self, account_user_id):
+        all_services = self._get_all_services(account_user_id)
+        my_service = [serv for serv in all_services if serv['logicalName'] == self.service_logical_name][0]
+        return my_service['id']
+    
+    def _add_user_to_service(self, service_id, user_id, roles):
+        headers = {"Authorization": "Bearer " + self.id_token}
+        body = {
+            "tenantId": service_id,
+            "tenantData": [
+                {
+                    "user": {
+                        "id": user_id
+                    },
+                    "serviceRoles": roles
+                }
+            ]
+        }
+        r = requests.post(self._getAbsoluteEndpoint(
+            f"/portal_/api/serviceInstance/addUsersInService"), headers=headers, json=body)
+
+
+    def _invite_user(self, account_user_id, service_id, user_email, roles):
+        headers = {"Authorization": "Bearer " + self.id_token}
+        body = {
+            "accountUserId": account_user_id,
+            "inviteUsersData": {
+                "userCreateRequestDtoList": [
+                    {
+                        "emailId": user_email,
+                        "redirectUrl": self._getAbsoluteEndpoint(f"/{self.account_name}/portal_/loginwithguid")
+                    }
+                ],
+                "tenantRoleListMap": {
+                    str(service_id): roles
+                },
+                "accountAdmin": False
+            }
+        }
+        r = requests.post(self._getAbsoluteEndpoint(
+            f"/{self.account_name}/portal_/api/users/inviteUsers"), headers=headers, json=body)
+
+    def _get_user_id_tenant(self, user_email):
+        r = self.get(f"/odata/Users/?$filter=EmailAddress eq '{user_email}'")
+        return r.json()["value"][0]["Id"]
+    
+    def _add_user_to_folder(self, user_id, folder_id):
+        print('Adding user to folder')
+        body = {
+            "assignments": {
+                "UserIds": [user_id],
+                "RolesPerFolder": [
+                    {
+                        "FolderId": int(folder_id)
+                    }
+                ]
+            }
+        }
+        r = self.post(
+            "/odata/Folders/UiPath.Server.Configuration.OData.AssignUsers", body)
+
+    def _remove_user_from_folder(self, user_id, folder_id):
+        print('Removing user from folder')
+        body = {
+            "userId": user_id
+        }
+        r = self.post(
+            f"/odata/Folders({folder_id})/UiPath.Server.Configuration.OData.RemoveUserFromFolder", body)
+
+    def _get_folder_id(self, folder_name):
+        r = self.get(f"/odata/Folders?$filter=DisplayName eq '{folder_name}'")
+        print(r.json())
+        return r.json()['value'][0]['Id']
+
+    def _adjust_user_folders(self, user_email):
+        user_id = self._get_user_id_tenant(user_email)
+        self._add_user_to_folder(user_id, self.organization_unit_id)
+        default_folder_id = self._get_folder_id("Default")
+        self._remove_user_from_folder(user_id, default_folder_id)
+
+    def invite_user(self, user_email, roles):
+        print('Inviting user to service: ' + user_email)
+        account_user_id = self._get_my_account_user_id()
+        service_id = self._get_my_service_id(account_user_id)
+        user_id = self._get_user_id_account(account_user_id, user_email)
+        if user_id is not None:
+            self._add_user_to_service(service_id, user_id, roles)
+        else:
+            self._invite_user(account_user_id, service_id, user_email, roles)
+        time.sleep(3)
+        self._adjust_user_folders(user_email)
+    
+            
     def create_folder(self):
         return self._create_folder(self.folder_name)
 
@@ -80,10 +214,11 @@ class CloudOrchHelper:
                 "Password": password,
                 "Type": "Development",
                 "ExecutionSettings": {
-                    "LoginToConsole": False
+                    "LoginToConsole": False,
+                    "ResolutionWidth": "1920", 
+                    "ResolutionHeight": "1080"
                 }
             }
-        print(body)
         r = self.post("/odata/Robots", body)
         r = r.json()
         print(r)
@@ -186,7 +321,7 @@ class CloudOrchHelper:
         print(body)
         print(self.post("/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs", body).json())
 
-def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, process_list, autoarm_list, asset_list):
+def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, process_list, autoarm_list, asset_list, roles):
     folder_id = orchHelper.create_folder()
 
     (robot_id, user_id) = orchHelper.create_and_connect_robot(password)
@@ -194,6 +329,8 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
     orchHelper.add_robot_to_environment(robot_id, environment_id)
     role_id = orchHelper.get_role_id("DSF_Robot")
     orchHelper.assign_user_role(user_id, role_id)
+
+    orchHelper.invite_user(ms_account_user, roles)
     
     release_keys = []
     autoarm_release_keys = []
@@ -221,15 +358,24 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
         "CredentialPassword": ms_account_pw
     })
 
+    # unique username
+    orchHelper.create_asset({
+        "Name": "DSF_UniqueUser",
+        "ValueScope": "Global",
+        "ValueType": "Text",
+        "StringValue": orchHelper.sap_user_name
+    })
+
 
     # autostart by default
     for (release_key, process_args) in release_keys:
-        orchHelper.start_process(release_key, robot_id, process_args.format(orchHelper=orchHelper))
+        orchHelper.start_process(release_key, robot_id, process_args)
 
     # auto-arm based on arguments
     for release_key in autoarm_release_keys:
         orchHelper.start_process(release_key, robot_id, "{'Mode': 'arm'}")
 
 
-def setup_dsf_folder_dev(orchHelper, password, ms_account_user, ms_account_pw, process_list, autoarm_list, asset_list):
-    print(autoarm_list)
+def setup_dsf_folder_dev(orchHelper, password, ms_account_user, ms_account_pw, process_list, autoarm_list, asset_list, roles):
+    orchHelper.organization_unit_id = "2988"
+    orchHelper.invite_user(ms_account_user, roles)
