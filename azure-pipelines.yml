@@ -1,0 +1,22 @@
+
+trigger:
+- master
+- andrei
+- stefan
+
+stages:
+- stage: Build
+  displayName: Build and Test
+  jobs:
+  - job: test
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+    - task: AzureCLI@2
+      displayName: 'validate'
+      inputs:
+        azureSubscription: PoC
+        scriptLocation: inlineScript
+        inlineScript: |
+          az --version
