@@ -22,4 +22,4 @@ stages:
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
-          az group deployment validate --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/lab/azuredeploy.json --template-file @"$(Build.SourcesDirectory)/lab/azuredeploy.parameters.json"
+          az group deployment validate --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/lab/azuredeploy.json --parameters @$(Build.SourcesDirectory)/lab/azuredeploy.parameters.json
