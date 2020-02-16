@@ -1,0 +1,25 @@
+variables:
+- group: demo-vm-deploy
+
+trigger:
+- master
+- andrei
+- stefan
+
+stages:
+- stage: Build
+  displayName: Build and Test
+  jobs:
+  - job: test
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+    - task: AzureCLI@2
+      displayName: 'validate'
+      inputs:
+        azureSubscription: $(azureSubscription) 
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          az group deployment validate --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/lab/azuredeploy.json --parameters @$(Build.SourcesDirectory)/lab/azuredeploy.parameters.json --mode Complete
