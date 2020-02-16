@@ -1,120 +1,135 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "adminusername": {
+    "adminUsername": {
       "type": "string",
       "metadata": {
         "description": "Username for the Virtual Machine."
       }
     },
-    "adminpassword": {
-      "type": "string",
+    "adminPassword": {
+      "type": "SecureString",
       "metadata": {
         "description": "Password for the Virtual Machine."
       }
     },
-    "adminemail": {
+    "galleryName": {
       "type": "string",
       "metadata": {
-        "description": "Admin email for Redis"
+        "description": "Name of the Shared Image Gallery."
       }
     },
-    "dnsHAA": {
-      "defaultValue": "DNS-HAA",
+    "galleryImageDefinitionName": {
       "type": "string",
       "metadata": {
-        "description": "DNS suffix"
+        "description": "Name of the Image Definition."
       }
     },
-    "dnsOrch": {
-      "defaultValue": "DNS-ORCH",
+    "galleryImageVersionName": {
       "type": "string",
       "metadata": {
-        "description": "DNS suffix"
+        "description": "Name of the Image Version - should follow <MajorVersion>.<MinorVersion>.<Patch>."
       }
     }
   },
   "variables": {
+    "nicName": "[concat(uniquestring(resourceGroup().id), 'myVMNic')]",
+    "addressPrefix": "10.0.0.0/16",
+    "subnetName": "Subnet",
+    "subnetPrefix": "10.0.0.0/24",
+    "publicIPAddressName": "[concat(uniquestring(resourceGroup().id), 'myPublicIP')]",
+    "vmName": "test001",
+    "virtualNetworkName": "MyVNET",
+    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
   },
   "resources": [
     {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2018-05-01",
-      "name": "linkedOrch",
-      "dependsOn": [
-        "linkedHaa"
-      ],
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('publicIPAddressName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[resourceGroup().location]",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "https://raw.githubusercontent.com/UiPath/DSF-cert-ARMtemplates/master/Environments/LinkedTemplate/Orch/azuredeploy.json?token=ACMXS7YNH2I3HRSTGZQ4JKS6JPP42",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "adminusername": {
-            "value": "[parameters('adminusername')]"
-          },
-          "adminpassword": {
-            "value": "[parameters('adminpassword')]"
-          },
-          "dnsOrch": {
-            "value": "[parameters('dnsOrch')]"
-          }
-        }
+        "publicIPAllocationMethod": "Dynamic"
       }
     },
     {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2018-05-01",
-      "name": "linkedHaa",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('virtualNetworkName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[resourceGroup().location]",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "https://raw.githubusercontent.com/UiPath/DSF-cert-ARMtemplates/master/Environments/LinkedTemplate/HAA/azuredeploy.json?token=ACMXS74TPNPFK73QZCRNTWC6JPP66",
-          "contentVersion": "1.0.0.0"
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('addressPrefix')]"
+          ]
         },
-        "parameters": {
-          "adminusername": {
-            "value": "[concat(parameters('adminusername'),'-haa')]"
-          },
-          "adminemail": {
-            "value": "[parameters('adminemail')]"
-          },
-          "adminpassword": {
-            "value": "[parameters('adminpassword')]"
-          },
-          "dnsHAA": {
-            "value": "[parameters('dnsHAA')]"
+        "subnets": [
+          {
+            "name": "[variables('subnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetPrefix')]"
+            }
           }
-        }
+        ]
       }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('nicName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+              },
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('vmName')]",
+      "apiVersion": "2018-04-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "Standard_A1"
+        },
+        "osProfile": {
+          "computerName": "[variables('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "id": "[resourceId('Microsoft.Compute/galleries/images/versions', parameters('galleryName'), parameters('galleryImageDefinitionName'), parameters('galleryImageVersionName'))]"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+      ]
     }
-  ],
-  "outputs": {
-    "OrchestratorVMUser": {
-      "value": "[parameters('adminusername')]",
-      "type": "string"
-    },
-    "OrchestratorVMPass": {
-      "value": "[parameters('adminpassword')]",
-      "type": "string"
-    },
-    "HAA-adminEmail": {
-      "value": "[parameters('adminemail')]",
-      "type": "string"
-    },
-    "HAAConnectionString": {
-      "value": "[reference('linkedHaa').outputs.HAAConnectionString.value]",
-      "type": "string"
-    },
-    "HAA-DNS": {
-      "value": "[reference('linkedHaa').outputs.fqdn.value]",
-      "type": "string"
-    },
-    "OrchestratorDNS": {
-      "value": "[reference('linkedOrch').outputs.fqdn.value]",
-      "type": "string"
-    }
-  }
+  ]
 }
