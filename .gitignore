@@ -1,6 +1,7 @@
 commands.cmd
 lab/azuredeploy_dev.parameters.json
 vm/azuredeploy_dev.parameters.json
+env/azuredeploy_dev.parameters.json
 util/DeleteFolder_presales.ps1
 \.vscode/*
 Pipfile.lock
