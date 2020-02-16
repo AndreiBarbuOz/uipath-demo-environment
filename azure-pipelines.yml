@@ -23,3 +23,4 @@ stages:
         scriptLocation: inlineScript
         inlineScript: |
           az group deployment validate --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/lab/azuredeploy.json --parameters @$(Build.SourcesDirectory)/lab/azuredeploy.parameters.json --mode Complete
+          az group deployment validate --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/vm/azuredeploy.json --parameters @$(Build.SourcesDirectory)/vm/azuredeploy.parameters.json --mode Complete
