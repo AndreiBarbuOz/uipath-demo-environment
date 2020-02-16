@@ -16,7 +16,7 @@ stages:
     - task: AzureCLI@2
       displayName: 'validate'
       inputs:
-        azureSubscription: PoC
+        azureSubscription: 'azure-poc-subscription'
         scriptLocation: inlineScript
         inlineScript: |
           az --version
