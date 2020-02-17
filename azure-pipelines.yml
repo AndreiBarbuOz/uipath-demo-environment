@@ -38,7 +38,7 @@ stages:
         #csmFileLink: # Required when templateLocation == URL Of The File
         #csmParametersFileLink: # Optional
         csmFile: $(Build.SourcesDirectory)/lab/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
-        #csmParametersFile: # Optional
+        csmParametersFile: $(Build.SourcesDirectory)/lab/azuredeploy.parameters.json # Optional
         #overrideParameters: # Optional
         deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
         #enableDeploymentPrerequisites: 'None' # Optional. Options: none, configureVMwithWinRM, configureVMWithDGAgent
