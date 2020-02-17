@@ -59,6 +59,7 @@ stages:
         csmFile: $(Build.SourcesDirectory)/lab/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
         csmParametersFile: $(Build.SourcesDirectory)/lab/azuredeploy.parameters.json # Optional
         deploymentMode: 'Complete' # Options: Incremental, Complete, Validation
+        overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsftest"
 
 #    - task: AzureResourceGroupDeployment@2
 #      displayName: validate vm template
