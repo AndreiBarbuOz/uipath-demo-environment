@@ -35,9 +35,6 @@
     "ms_account_pw": {
       "value": "<microsoft pw>"
     },
-    "location": {
-      "value": "West Europe"
-    },
     "autoarmProcesses": {
       "value": "Invoice2SAP"
     }

@@ -10,16 +10,38 @@ stages:
 - stage: Build
   displayName: Build and Test
   jobs:
-  - job: test
+  - job: validate
     pool:
       vmImage: 'ubuntu-latest'
 
     steps:
-    - task: AzureCLI@2
-      displayName: 'validate'
+    - task: AzureResourceGroupDeployment@2
+      displayName: validate lab template
       inputs:
-        azureSubscription: $(azureSubscription) 
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: |
-          az group deployment validate --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/lab/azuredeploy.json --parameters @$(Build.SourcesDirectory)/lab/azuredeploy.parameters.json --mode Complete
+        azureSubscription: $(testAzureConnection)
+        resourceGroupName: $(testResourceGroupName)
+        templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
+        csmFile: $(Build.SourcesDirectory)/lab/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
+        csmParametersFile: $(Build.SourcesDirectory)/lab/azuredeploy.parameters.json # Optional
+        deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
+
+    - task: AzureResourceGroupDeployment@2
+      displayName: validate vm template
+      inputs:
+        azureSubscription: $(testAzureConnection)
+        resourceGroupName: $(testResourceGroupName)
+        templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
+        csmFile: $(Build.SourcesDirectory)/vm/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
+        csmParametersFile: $(Build.SourcesDirectory)/vm/azuredeploy.parameters.json # Optional
+        deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
+
+    - task: AzureResourceGroupDeployment@2
+      displayName: validate env template
+      inputs:
+        azureSubscription: $(testAzureConnection)
+        resourceGroupName: $(testResourceGroupName)
+        templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
+        csmFile: $(Build.SourcesDirectory)/env/PresalesDemo/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
+        csmParametersFile: $(Build.SourcesDirectory)/env/PresalesDemo/azuredeploy.parameters.json # Optional
+        deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
+  

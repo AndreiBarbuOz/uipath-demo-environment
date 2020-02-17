@@ -1,5 +1,7 @@
 # UiPath Demo environment
 
+[![Build Status](https://dev.azure.com/andreibarbu0946/DSF/_apis/build/status/AndreiBarbuOz.uipath-demo-environment?branchName=master)](https://dev.azure.com/andreibarbu0946/DSF/_build/latest?definitionId=13&branchName=master)
+
 Create the environment needed to run the UiPath demo VMs found here
 
 ## Installation and prerequisites
