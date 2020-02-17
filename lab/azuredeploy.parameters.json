@@ -28,9 +28,6 @@
     },
     "autoShutdownPolicyTime": {
       "value": "0000"
-    },
-    "location": {
-      "value": "westeurope"
     }
   }
 }

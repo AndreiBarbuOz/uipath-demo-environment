@@ -10,25 +10,13 @@ stages:
 - stage: Build
   displayName: Build and Test
   jobs:
-  - job: test
+  - job: validate
     pool:
       vmImage: 'ubuntu-latest'
 
     steps:
-    - task: AzureCLI@2
-      displayName: 'validate'
-      inputs:
-        azureSubscription: $(testAzureConnection)
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: |
-          az group deployment validate --resource-group $(testResourceGroupName) --template-file $(Build.SourcesDirectory)/lab/azuredeploy.json --parameters @$(Build.SourcesDirectory)/lab/azuredeploy.parameters.json --mode Complete
-          az group deployment validate --resource-group $(testResourceGroupName) --template-file $(Build.SourcesDirectory)/vm/azuredeploy.json --parameters @$(Build.SourcesDirectory)/vm/azuredeploy.parameters.json --mode Complete
-          az group deployment validate --resource-group $(testResourceGroupName) --template-file $(Build.SourcesDirectory)/env/PresalesDemo/azuredeploy.json --parameters @$(Build.SourcesDirectory)/env/PresalesDemo/azuredeploy.parameters.json --mode Complete
-
-
     - task: AzureResourceGroupDeployment@2
-      displayName: test deployment
+      displayName: validate lab template
       inputs:
         azureSubscription: $(testAzureConnection)
         #action: 'Create Or Update Resource Group' # Options: create Or Update Resource Group, select Resource Group, start, stop, stopWithDeallocate, restart, delete, deleteRG
@@ -53,3 +41,58 @@ stages:
         #deploymentName: # Optional
         #deploymentOutputs: # Optional
         #addSpnToEnvironment: false # Optional
+
+    - task: AzureResourceGroupDeployment@2
+      displayName: validate vm template
+      inputs:
+        azureSubscription: $(testAzureConnection)
+        #action: 'Create Or Update Resource Group' # Options: create Or Update Resource Group, select Resource Group, start, stop, stopWithDeallocate, restart, delete, deleteRG
+        resourceGroupName: $(testResourceGroupName)
+        #location: # Required when action == Create Or Update Resource Group
+        templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
+        #csmFileLink: # Required when templateLocation == URL Of The File
+        #csmParametersFileLink: # Optional
+        csmFile: $(Build.SourcesDirectory)/vm/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
+        csmParametersFile: $(Build.SourcesDirectory)/vm/azuredeploy.parameters.json # Optional
+        #overrideParameters: # Optional
+        deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
+        #enableDeploymentPrerequisites: 'None' # Optional. Options: none, configureVMwithWinRM, configureVMWithDGAgent
+        #teamServicesConnection: # Required when enableDeploymentPrerequisites == ConfigureVMWithDGAgent
+        #teamProject: # Required when enableDeploymentPrerequisites == ConfigureVMWithDGAgent
+        #deploymentGroupName: # Required when enableDeploymentPrerequisites == ConfigureVMWithDGAgent
+        #copyAzureVMTags: true # Optional
+        #runAgentServiceAsUser: # Optional
+        #userName: # Required when enableDeploymentPrerequisites == ConfigureVMWithDGAgent && RunAgentServiceAsUser == True
+        #password: # Optional
+        #outputVariable: # Optional
+        #deploymentName: # Optional
+        #deploymentOutputs: # Optional
+        #addSpnToEnvironment: false # Optional
+
+    - task: AzureResourceGroupDeployment@2
+      displayName: validate env template
+      inputs:
+        azureSubscription: $(testAzureConnection)
+        #action: 'Create Or Update Resource Group' # Options: create Or Update Resource Group, select Resource Group, start, stop, stopWithDeallocate, restart, delete, deleteRG
+        resourceGroupName: $(testResourceGroupName)
+        #location: # Required when action == Create Or Update Resource Group
+        templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
+        #csmFileLink: # Required when templateLocation == URL Of The File
+        #csmParametersFileLink: # Optional
+        csmFile: $(Build.SourcesDirectory)/env/PresalesDemo/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
+        csmParametersFile: $(Build.SourcesDirectory)/env/PresalesDemo/azuredeploy.parameters.json # Optional
+        #overrideParameters: # Optional
+        deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
+        #enableDeploymentPrerequisites: 'None' # Optional. Options: none, configureVMwithWinRM, configureVMWithDGAgent
+        #teamServicesConnection: # Required when enableDeploymentPrerequisites == ConfigureVMWithDGAgent
+        #teamProject: # Required when enableDeploymentPrerequisites == ConfigureVMWithDGAgent
+        #deploymentGroupName: # Required when enableDeploymentPrerequisites == ConfigureVMWithDGAgent
+        #copyAzureVMTags: true # Optional
+        #runAgentServiceAsUser: # Optional
+        #userName: # Required when enableDeploymentPrerequisites == ConfigureVMWithDGAgent && RunAgentServiceAsUser == True
+        #password: # Optional
+        #outputVariable: # Optional
+        #deploymentName: # Optional
+        #deploymentOutputs: # Optional
+        #addSpnToEnvironment: false # Optional
+  
