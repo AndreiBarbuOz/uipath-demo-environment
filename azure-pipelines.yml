@@ -18,9 +18,10 @@ stages:
     - task: AzureCLI@2
       displayName: 'validate'
       inputs:
-        azureSubscription: $(azureSubscription) 
+        azureSubscription: $(testAzureConnection)
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: |
-          az group deployment validate --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/lab/azuredeploy.json --parameters @$(Build.SourcesDirectory)/lab/azuredeploy.parameters.json --mode Complete
-          az group deployment validate --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/vm/azuredeploy.json --parameters @$(Build.SourcesDirectory)/vm/azuredeploy.parameters.json --mode Complete
+          az group deployment validate --resource-group $(testResourceGroupName) --template-file $(Build.SourcesDirectory)/lab/azuredeploy.json --parameters @$(Build.SourcesDirectory)/lab/azuredeploy.parameters.json --mode Complete
+          az group deployment validate --resource-group $(testResourceGroupName) --template-file $(Build.SourcesDirectory)/vm/azuredeploy.json --parameters @$(Build.SourcesDirectory)/vm/azuredeploy.parameters.json --mode Complete
+          az group deployment validate --resource-group $(testResourceGroupName) --template-file $(Build.SourcesDirectory)/env/PresalesDemo/azuredeploy.json --parameters @$(Build.SourcesDirectory)/env/PresalesDemo/azuredeploy.parameters.json --mode Complete
