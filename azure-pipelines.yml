@@ -10,7 +10,7 @@ stages:
 - stage: Build
   displayName: Build and Test
   jobs:
-  - job: validate
+  - job: Validate
     pool:
       vmImage: 'ubuntu-latest'
 
@@ -45,7 +45,8 @@ stages:
         csmParametersFile: $(Build.SourcesDirectory)/env/PresalesDemo/azuredeploy.parameters.json # Optional
         deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
 
-  - job: test
+  - job: DeployTest
+    dependsOn: Validate
     pool:
       vmImage: 'ubuntu-latest'
 
@@ -58,8 +59,10 @@ stages:
         templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
         csmFile: $(Build.SourcesDirectory)/lab/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
         csmParametersFile: $(Build.SourcesDirectory)/lab/azuredeploy.parameters.json # Optional
-        deploymentMode: 'Complete' # Options: Incremental, Complete, Validation
+        deploymentMode: 'Incremental' # Options: Incremental, Complete, Validation
         overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsftest"
+
+
 
 #    - task: AzureResourceGroupDeployment@2
 #      displayName: validate vm template

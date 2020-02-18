@@ -34,13 +34,20 @@
       }
     },
     "artifactRepo": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "https://github.com/AndreiBarbuOz/uipath-demo-environment.git"
     },
     "artifactBranch": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "master"
     },
     "artifactFolderPath": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "/Artifacts"
+    },
+    "environmentFolderPath": {
+      "type": "string",
+      "defaultValue": "/env"
     },
     "autoShutdownPolicyTime": {
       "type": "string"
@@ -178,6 +185,7 @@
           "properties": {
             "uri": "[parameters('artifactRepo')]",
             "folderPath": "[parameters('artifactFolderPath')]",
+            "armTemplateFolderPath": "[parameters('environmentFolderPath')]",
             "branchRef": "[parameters('artifactBranch')]",
             "displayName": "Configuration",
             "securityToken": "[parameters('gitToken')]",
