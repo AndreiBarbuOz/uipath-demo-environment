@@ -2,10 +2,19 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "userName": {
+    "username": {
       "type": "string"
     },
     "password": {
+      "type": "string"
+    },
+    "galleryName": {
+      "type": "string"
+    },
+    "galleryImageDefinitionName": {
+      "type": "string"
+    },
+    "galleryImageVersionName": {
       "type": "string"
     }
   },
@@ -21,7 +30,7 @@
     "vmSize": "Standard_A2_v2"
   },
   "resources": [
-        {
+    {
       "type": "Microsoft.Network/publicIPAddresses",
       "apiVersion": "2018-11-01",
       "name": "[variables('publicIPAddressName')]",
@@ -31,24 +40,24 @@
       }
     },
     {
-      "comments":  "Default Network Security Group for template",
-      "type":  "Microsoft.Network/networkSecurityGroups",
-      "apiVersion":  "2019-08-01",
-      "name":  "[variables('networkSecurityGroupName')]",
-      "location":  "[resourceGroup().location]",
+      "comments": "Default Network Security Group for template",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2019-08-01",
+      "name": "[variables('networkSecurityGroupName')]",
+      "location": "[resourceGroup().location]",
       "properties": {
         "securityRules": [
           {
-            "name":  "default-allow-3389",
+            "name": "default-allow-3389",
             "properties": {
-              "priority":  1000,
-              "access":  "Allow",
-              "direction":  "Inbound",
-              "destinationPortRange":  "3389",
-              "protocol":  "Tcp",
-              "sourcePortRange":  "*",
-              "sourceAddressPrefix":  "*",
-              "destinationAddressPrefix":  "*"
+              "priority": 1000,
+              "access": "Allow",
+              "direction": "Inbound",
+              "destinationPortRange": "3389",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
             }
           }
         ]
@@ -126,10 +135,7 @@
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "MicrosoftWindowsDesktop",
-            "offer": "office-365",
-            "sku": "rs5-evd-o365pp",
-            "version": "latest"
+            "id": "[resourceId('Microsoft.Compute/galleries/images/versions', parameters('galleryName'), parameters('galleryImageDefinitionName'), parameters('galleryImageVersionName'))]"
           },
           "osDisk": {
             "createOption": "FromImage"
