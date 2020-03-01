@@ -13,6 +13,9 @@
         },
         "projectName": {
             "value": "sample-project"
+        },
+        "parentRg": {
+            "value": "sample-rg"
         }
     }
 }

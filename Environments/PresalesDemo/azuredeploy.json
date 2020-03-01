@@ -14,6 +14,12 @@
     "projectName": {
       "type": "string"
     },
+    "parentRg": {
+      "type": "string",
+      "metadata":{
+        "description": "parent resource group"
+      }
+    },
     "resourceTags": {
       "type": "object",
       "defaultValue": {
@@ -166,7 +172,7 @@
       "identity": {
         "type": "UserAssigned",
         "userAssignedIdentities": {
-          "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',variables('managedIdentityName'))]": {
+          "[resourceID(parameters('parentRg'),'Microsoft.ManagedIdentity/userAssignedIdentities/',variables('managedIdentityName'))]": {
           }
         }
       }
