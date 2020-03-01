@@ -41,8 +41,8 @@ stages:
         azureSubscription: $(testAzureConnection)
         resourceGroupName: $(testResourceGroupName)
         templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
-        csmFile: $(Build.SourcesDirectory)/Environment/PresalesDemo/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
-        csmParametersFile: $(Build.SourcesDirectory)/Environment/PresalesDemo/azuredeploy.parameters.json # Optional
+        csmFile: $(Build.SourcesDirectory)/Environments/PresalesDemo/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
+        csmParametersFile: $(Build.SourcesDirectory)/Environments/PresalesDemo/azuredeploy.parameters.json # Optional
         deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
 
   - job: DeployTest
