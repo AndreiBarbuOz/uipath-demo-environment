@@ -8,9 +8,6 @@
     "password": {
       "type": "string"
     },
-    "galleryName": {
-      "type": "string"
-    },
     "galleryImageDefinitionName": {
       "type": "string"
     },
@@ -35,7 +32,8 @@
     "virtualNetworkName": "[concat(variables('vmname'), '-vnet')]",
     "subnetName": "[concat(variables('vmname'),'-subnet')]",
     "managedIdentityName": "[concat(parameters('projectName'),'-msi')]",
-    "vmSize": "Standard_D3_v2"
+    "vmSize": "Standard_D3_v2",
+    "galleryName": "[concat(parameters('projectName'),'_sig')]"
   },
   "resources": [
     {
@@ -148,7 +146,7 @@
         },
         "storageProfile": {
           "imageReference": {
-            "id": "[resourceId('Microsoft.Compute/galleries/images', parameters('galleryName'), parameters('galleryImageDefinitionName'))]"
+            "id": "[resourceId('Microsoft.Compute/galleries/images', variables('galleryName'), parameters('galleryImageDefinitionName'))]"
           },
           "osDisk": {
             "createOption": "FromImage",

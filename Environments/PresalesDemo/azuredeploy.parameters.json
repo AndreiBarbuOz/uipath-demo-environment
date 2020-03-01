@@ -8,9 +8,6 @@
         "password": {
             "value": "vm-password"
         },
-        "galleryName": {
-            "value": "project_sig"
-        },
         "galleryImageDefinitionName": {
             "value": "presales-demo"
         },
