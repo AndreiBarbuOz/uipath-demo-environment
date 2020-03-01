@@ -50,7 +50,6 @@ stages:
   condition: succeeded()
   jobs:
     - deployment: deployUAT
-      environment: uat
       pool:
         vmImage: 'ubuntu-latest'
       strategy:

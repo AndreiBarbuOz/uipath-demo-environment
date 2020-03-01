@@ -41,14 +41,6 @@
       "type": "string",
       "defaultValue": "master"
     },
-    "artifactFolderPath": {
-      "type": "string",
-      "defaultValue": "/Artifacts"
-    },
-    "environmentFolderPath": {
-      "type": "string",
-      "defaultValue": "/env"
-    },
     "autoShutdownPolicyTime": {
       "type": "string"
     }
