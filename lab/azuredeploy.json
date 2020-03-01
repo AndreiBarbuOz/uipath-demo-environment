@@ -172,7 +172,7 @@
           "properties": {
             "uri": "[parameters('artifactRepo')]",
             "folderPath": "/Artifacts",
-            "armTemplateFolderPath": "/Environments",
+
             "branchRef": "[parameters('artifactBranch')]",
             "displayName": "Configuration",
             "securityToken": "[parameters('gitToken')]",
