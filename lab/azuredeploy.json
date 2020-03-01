@@ -38,8 +38,7 @@
       "defaultValue": "https://github.com/AndreiBarbuOz/uipath-demo-environment.git"
     },
     "artifactBranch": {
-      "type": "string",
-      "defaultValue": "master"
+      "type": "string"
     },
     "autoShutdownPolicyTime": {
       "type": "string"
