@@ -49,24 +49,20 @@ stages:
   dependsOn: Build
   condition: succeeded()
   jobs:
-    - deployment: deployUAT
-      environment: uat
+    - job: deployUAT
       pool:
         vmImage: 'ubuntu-latest'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            - task: AzureResourceGroupDeployment@2
-              displayName: deploy lab to test
-              inputs:
-                azureSubscription: $(testAzureConnection)
-                resourceGroupName: $(testResourceGroupName)
-                templateLocation: 'Linked artifact'
-                csmFile: $(Build.SourcesDirectory)/lab/azuredeploy.json
-                csmParametersFile: $(Build.SourcesDirectory)/lab/azuredeploy.parameters.json
-                deploymentMode: 'Incremental'
-                overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsftest"
+      steps:
+      - task: AzureResourceGroupDeployment@2
+        displayName: deploy lab to test
+        inputs:
+          azureSubscription: $(testAzureConnection)
+          resourceGroupName: $(testResourceGroupName)
+          templateLocation: 'Linked artifact'
+          csmFile: $(Build.SourcesDirectory)/lab/azuredeploy.json
+          csmParametersFile: $(Build.SourcesDirectory)/lab/azuredeploy.parameters.json
+          deploymentMode: 'Incremental'
+          overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsftest"
 
 - stage: DeployProd
   displayName: Deploy to Prod
