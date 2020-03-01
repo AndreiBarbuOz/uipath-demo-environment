@@ -98,5 +98,5 @@ stages:
                 csmFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.json
                 csmParametersFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.parameters.json
                 deploymentMode: 'Incremental'
-                overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsf"
+                overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsfprod"
               

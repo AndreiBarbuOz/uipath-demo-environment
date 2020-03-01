@@ -9,10 +9,13 @@
             "value": "vm-password"
         },
         "galleryName": {
-            "value": "dsftest_sig"
+            "value": "project_sig"
         },
         "galleryImageDefinitionName": {
             "value": "presales-demo"
+        },
+        "projectName": {
+            "value": "sample-project"
         }
     }
 }

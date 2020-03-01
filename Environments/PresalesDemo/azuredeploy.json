@@ -14,6 +14,9 @@
     "galleryImageDefinitionName": {
       "type": "string"
     },
+    "projectName": {
+      "type": "string"
+    },
     "resourceTags": {
       "type": "object",
       "defaultValue": {
@@ -31,6 +34,7 @@
     "publicIPAddressName": "[concat(variables('vmname'), '-pip' )]",
     "virtualNetworkName": "[concat(variables('vmname'), '-vnet')]",
     "subnetName": "[concat(variables('vmname'),'-subnet')]",
+    "managedIdentityName": "[concat(parameters('projectName'),'-msi')]",
     "vmSize": "Standard_D3_v2"
   },
   "resources": [
@@ -164,7 +168,7 @@
       "identity": {
         "type": "UserAssigned",
         "userAssignedIdentities": {
-          "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/','dsftest-msi')]": {
+          "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',variables('managedIdentityName'))]": {
           }
         }
       }
