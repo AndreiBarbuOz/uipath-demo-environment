@@ -41,14 +41,6 @@
       "type": "string",
       "defaultValue": "master"
     },
-    "artifactFolderPath": {
-      "type": "string",
-      "defaultValue": "/Artifacts"
-    },
-    "environmentFolderPath": {
-      "type": "string",
-      "defaultValue": "/env"
-    },
     "autoShutdownPolicyTime": {
       "type": "string"
     }
@@ -180,8 +172,8 @@
           ],
           "properties": {
             "uri": "[parameters('artifactRepo')]",
-            "folderPath": "[parameters('artifactFolderPath')]",
-            "armTemplateFolderPath": "[parameters('environmentFolderPath')]",
+            "folderPath": "/Artifacts",
+            "armTemplateFolderPath": "/Environments",
             "branchRef": "[parameters('artifactBranch')]",
             "displayName": "Configuration",
             "securityToken": "[parameters('gitToken')]",
