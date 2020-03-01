@@ -7,6 +7,12 @@
         },
         "password": {
             "value": "vm-password"
+        },
+        "galleryName": {
+            "value": "dsftest_sig"
+        },
+        "galleryImageDefinitionName": {
+            "value": "presales-demo"
         }
     }
 }
