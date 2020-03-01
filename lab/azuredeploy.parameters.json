@@ -23,9 +23,6 @@
     "artifactBranch": {
       "value": "master"
     },
-    "artifactFolderPath": {
-      "value": "/Artifacts"
-    },
     "autoShutdownPolicyTime": {
       "value": "0000"
     }

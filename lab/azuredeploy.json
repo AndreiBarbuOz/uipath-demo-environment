@@ -39,9 +39,6 @@
     "artifactBranch": {
       "type": "string"
     },
-    "artifactFolderPath": {
-      "type": "string"
-    },
     "autoShutdownPolicyTime": {
       "type": "string"
     },
@@ -177,7 +174,8 @@
           ],
           "properties": {
             "uri": "[parameters('artifactRepo')]",
-            "folderPath": "[parameters('artifactFolderPath')]",
+            "folderPath": "/Artifacts",
+            "armTemplateFolderPath": "/Environments",
             "branchRef": "[parameters('artifactBranch')]",
             "displayName": "Configuration",
             "securityToken": "[parameters('gitToken')]",

@@ -14,14 +14,11 @@
     "galleryImageDefinitionName": {
       "type": "string"
     },
-    "galleryImageVersionName": {
-      "type": "string"
-    },
     "resourceTags": {
       "type": "object",
       "defaultValue": {
         "Owner": "andrei.barbu@uipath.com",
-        "Project": "DSF"
+        "Project": "Infrastructure"
       }
     }
   },
@@ -34,7 +31,7 @@
     "publicIPAddressName": "[concat(variables('vmname'), '-pip' )]",
     "virtualNetworkName": "[concat(variables('vmname'), '-vnet')]",
     "subnetName": "[concat(variables('vmname'),'-subnet')]",
-    "vmSize": "Standard_A2_v2"
+    "vmSize": "Standard_D3_v2"
   },
   "resources": [
     {
@@ -147,18 +144,14 @@
         },
         "storageProfile": {
           "imageReference": {
-            "id": "[resourceId('Microsoft.Compute/galleries/images/versions', parameters('galleryName'), parameters('galleryImageDefinitionName'), parameters('galleryImageVersionName'))]"
+            "id": "[resourceId('Microsoft.Compute/galleries/images', parameters('galleryName'), parameters('galleryImageDefinitionName'))]"
           },
           "osDisk": {
-            "createOption": "FromImage"
-          },
-          "dataDisks": [
-            {
-              "diskSizeGB": 1023,
-              "lun": 0,
-              "createOption": "Empty"
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "StandardSSD_LRS"
             }
-          ]
+          }
         },
         "networkProfile": {
           "networkInterfaces": [
@@ -166,6 +159,13 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
             }
           ]
+        }
+      },
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/','dsftest-msi')]": {
+          }
         }
       }
     }
