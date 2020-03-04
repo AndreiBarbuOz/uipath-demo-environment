@@ -8,12 +8,6 @@
     "password": {
       "type": "string"
     },
-    "galleryImageDefinitionName": {
-      "type": "string"
-    },
-    "galleryName": {
-      "type": "string"
-    },
     "resourceTags": {
       "type": "object",
       "defaultValue": {
@@ -144,7 +138,7 @@
         },
         "storageProfile": {
           "imageReference": {
-            "id": "[resourceId('Microsoft.Compute/galleries/images', parameters('galleryName'), parameters('galleryImageDefinitionName'))]"
+            "id": "[resourceId('Microsoft.Compute/galleries/images', 'DSFCertSharedImageGalery', 'presales-demo')]"
           },
           "osDisk": {
             "createOption": "FromImage",
