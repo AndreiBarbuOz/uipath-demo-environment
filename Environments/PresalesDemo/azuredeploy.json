@@ -7,13 +7,6 @@
     },
     "password": {
       "type": "string"
-    },
-    "resourceTags": {
-      "type": "object",
-      "defaultValue": {
-        "Owner": "andrei.barbu@uipath.com",
-        "Project": "Infrastructure"
-      }
     }
   },
   "variables": {
@@ -35,8 +28,7 @@
       "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "Dynamic"
-      },
-      "tags": "[parameters('resourceTags')]"
+      }
     },
     {
       "comments": "Default Network Security Group for template",
@@ -44,7 +36,6 @@
       "apiVersion": "2019-08-01",
       "name": "[variables('networkSecurityGroupName')]",
       "location": "[resourceGroup().location]",
-      "tags": "[parameters('resourceTags')]",
       "properties": {
         "securityRules": [
           {
@@ -67,8 +58,7 @@
       "type": "Microsoft.Network/virtualNetworks",
       "apiVersion": "2018-11-01",
       "name": "[variables('virtualNetworkName')]",
-      "location": "[resourceGroup().location]",
-      "tags": "[parameters('resourceTags')]",
+      "location": "[resourceGroup().location]"
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
       ],
@@ -94,7 +84,6 @@
     {
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2018-11-01",
-      "tags": "[parameters('resourceTags')]",
       "name": "[variables('nicName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
@@ -121,7 +110,6 @@
     {
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2018-10-01",
-      "tags": "[parameters('resourceTags')]",
       "name": "[variables('vmName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
