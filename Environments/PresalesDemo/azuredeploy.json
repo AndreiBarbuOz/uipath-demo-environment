@@ -27,7 +27,10 @@
       "name": "[variables('publicIPAddressName')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "publicIPAllocationMethod": "Dynamic"
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[deployment().name]"
+        }
       }
     },
     {
@@ -146,15 +149,15 @@
     }
   ],
   "outputs": {
-    "OrchestratorVMUser": {
+    "vmUsername": {
       "value": "[parameters('username')]",
       "type": "string"
     },
-    "OrchestratorVMPass": {
+    "vmPassword": {
       "value": "[parameters('password')]",
       "type": "string"
     },
-    "OrchestratorFQDN": {
+    "vmFqdn": {
       "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))).dnsSettings.fqdn]",
       "type": "string"
     }
