@@ -14,12 +14,6 @@
     "projectName": {
       "type": "string"
     },
-    "parentRg": {
-      "type": "string",
-      "metadata":{
-        "description": "parent resource group"
-      }
-    },
     "resourceTags": {
       "type": "object",
       "defaultValue": {
@@ -37,7 +31,6 @@
     "publicIPAddressName": "[concat(variables('vmname'), '-pip' )]",
     "virtualNetworkName": "[concat(variables('vmname'), '-vnet')]",
     "subnetName": "[concat(variables('vmname'),'-subnet')]",
-    "managedIdentityName": "[concat(parameters('projectName'),'-msi')]",
     "vmSize": "Standard_D3_v2",
     "galleryName": "[concat(parameters('projectName'),'_sig')]"
   },
