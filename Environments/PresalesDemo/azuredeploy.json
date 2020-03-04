@@ -11,7 +11,7 @@
     "galleryImageDefinitionName": {
       "type": "string"
     },
-    "projectName": {
+    "galleryName": {
       "type": "string"
     },
     "resourceTags": {
@@ -31,8 +31,7 @@
     "publicIPAddressName": "[concat(variables('vmname'), '-pip' )]",
     "virtualNetworkName": "[concat(variables('vmname'), '-vnet')]",
     "subnetName": "[concat(variables('vmname'),'-subnet')]",
-    "vmSize": "Standard_D3_v2",
-    "galleryName": "[concat(parameters('projectName'),'_sig')]"
+    "vmSize": "Standard_D3_v2"
   },
   "resources": [
     {
@@ -145,7 +144,7 @@
         },
         "storageProfile": {
           "imageReference": {
-            "id": "[resourceId('Microsoft.Compute/galleries/images', variables('galleryName'), parameters('galleryImageDefinitionName'))]"
+            "id": "[resourceId('Microsoft.Compute/galleries/images', parameters('galleryName'), parameters('galleryImageDefinitionName'))]"
           },
           "osDisk": {
             "createOption": "FromImage",
@@ -163,5 +162,19 @@
         }
       }
     }
-  ]
+  ],
+  "outputs": {
+    "OrchestratorVMUser": {
+      "value": "[parameters('username')]",
+      "type": "string"
+    },
+    "OrchestratorVMPass": {
+      "value": "[parameters('password')]",
+      "type": "string"
+    },
+    "OrchestratorFQDN": {
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))).dnsSettings.fqdn]",
+      "type": "string"
+    }
+  }
 }

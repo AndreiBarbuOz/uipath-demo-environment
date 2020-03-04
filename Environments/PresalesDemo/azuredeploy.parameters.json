@@ -11,11 +11,8 @@
         "galleryImageDefinitionName": {
             "value": "presales-demo"
         },
-        "projectName": {
-            "value": "sample-project"
-        },
-        "parentRg": {
-            "value": "sample-rg"
+        "galleryName": {
+            "value": "sample-gallery"
         }
     }
 }
