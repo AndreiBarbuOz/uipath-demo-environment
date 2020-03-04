@@ -29,7 +29,7 @@
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[deployment().name]"
+          "domainNameLabel": "[toLower(deployment().name)]"
         }
       }
     },
