@@ -8,79 +8,95 @@ trigger:
 
 stages:
 - stage: Build
-  displayName: Build and Test
+  displayName: Build and Validate
   jobs:
   - job: Validate
     pool:
       vmImage: 'ubuntu-latest'
-
     steps:
     - task: AzureResourceGroupDeployment@2
       displayName: validate lab template
       inputs:
         azureSubscription: $(testAzureConnection)
         resourceGroupName: $(testResourceGroupName)
-        templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
-        csmFile: $(Build.SourcesDirectory)/lab/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
-        csmParametersFile: $(Build.SourcesDirectory)/lab/azuredeploy.parameters.json # Optional
-        deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
+        templateLocation: 'Linked artifact'
+        csmFile: $(Build.SourcesDirectory)/lab/azuredeploy.json
+        csmParametersFile: $(Build.SourcesDirectory)/lab/azuredeploy.parameters.json
+        deploymentMode: 'Validation'
 
     - task: AzureResourceGroupDeployment@2
       displayName: validate vm template
       inputs:
         azureSubscription: $(testAzureConnection)
         resourceGroupName: $(testResourceGroupName)
-        templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
-        csmFile: $(Build.SourcesDirectory)/vm/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
-        csmParametersFile: $(Build.SourcesDirectory)/vm/azuredeploy.parameters.json # Optional
-        deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
+        templateLocation: 'Linked artifact'
+        csmFile: $(Build.SourcesDirectory)/vm/azuredeploy.json
+        csmParametersFile: $(Build.SourcesDirectory)/vm/azuredeploy.parameters.json
+        deploymentMode: 'Validation'
 
     - task: AzureResourceGroupDeployment@2
       displayName: validate env template
       inputs:
         azureSubscription: $(testAzureConnection)
         resourceGroupName: $(testResourceGroupName)
-        templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
-        csmFile: $(Build.SourcesDirectory)/Environments/PresalesDemo/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
-        csmParametersFile: $(Build.SourcesDirectory)/Environments/PresalesDemo/azuredeploy.parameters.json # Optional
-        deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
+        templateLocation: 'Linked artifact'
+        csmFile: $(Build.SourcesDirectory)/Environments/PresalesDemo/azuredeploy.json
+        csmParametersFile: $(Build.SourcesDirectory)/Environments/PresalesDemo/azuredeploy.parameters.json
+        deploymentMode: 'Validation'
+    - publish: $(Build.SourcesDirectory)
+      artifact: drop
+      displayName: Publish all sources
+- stage: DeployUAT
+  displayName: Deploy to UAT
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+    - deployment: deployUAT
+      environment: uat
+      pool:
+        vmImage: 'ubuntu-latest'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - download: current
+              artifact: drop
+              displayName: Download sources
+            - task: AzureResourceGroupDeployment@2
+              displayName: deploy lab to test
+              inputs:
+                azureSubscription: $(testAzureConnection)
+                resourceGroupName: $(testResourceGroupName)
+                templateLocation: 'Linked artifact'
+                csmFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.json
+                csmParametersFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.parameters.json
+                deploymentMode: 'Incremental'
+                overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsftest" -artifactBranch $(Build.SourceBranchName)
 
-  - job: DeployTest
-    dependsOn: Validate
-    pool:
-      vmImage: 'ubuntu-latest'
-
-    steps:
-    - task: AzureResourceGroupDeployment@2
-      displayName: deploy lab to test
-      inputs:
-        azureSubscription: $(testAzureConnection)
-        resourceGroupName: $(testResourceGroupName)
-        templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
-        csmFile: $(Build.SourcesDirectory)/lab/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
-        csmParametersFile: $(Build.SourcesDirectory)/lab/azuredeploy.parameters.json # Optional
-        deploymentMode: 'Incremental' # Options: Incremental, Complete, Validation
-        overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsftest"
-
-
-
-#    - task: AzureResourceGroupDeployment@2
-#      displayName: validate vm template
-#      inputs:
-#        azureSubscription: $(testAzureConnection)
-#        resourceGroupName: $(testResourceGroupName)
-#        templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
-#        csmFile: $(Build.SourcesDirectory)/vm/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
-#        csmParametersFile: $(Build.SourcesDirectory)/vm/azuredeploy.parameters.json # Optional
-#        deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
-#
-#    - task: AzureResourceGroupDeployment@2
-#      displayName: validate env template
-#      inputs:
-#        azureSubscription: $(testAzureConnection)
-#        resourceGroupName: $(testResourceGroupName)
-#        templateLocation: 'Linked artifact' # Options: linked Artifact, uRL Of The File
-#        csmFile: $(Build.SourcesDirectory)/env/PresalesDemo/azuredeploy.json # Required when  TemplateLocation == Linked Artifact
-#        csmParametersFile: $(Build.SourcesDirectory)/env/PresalesDemo/azuredeploy.parameters.json # Optional
-#        deploymentMode: 'Validation' # Options: Incremental, Complete, Validation
-    
+- stage: DeployProd
+  displayName: Deploy to Prod
+  dependsOn: DeployUAT
+  condition: succeeded()
+  jobs:
+    - deployment: deployProd
+      environment: prod
+      pool:
+        vmImage: 'ubuntu-latest'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - download: current
+              artifact: drop
+              displayName: Download sources
+            - task: AzureResourceGroupDeployment@2
+              displayName: deploy lab to test
+              inputs:
+                azureSubscription: $(prodAzureConnection)
+                resourceGroupName: $(prodResourceGroupName)
+                templateLocation: 'Linked artifact'
+                csmFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.json
+                csmParametersFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.parameters.json
+                deploymentMode: 'Incremental'
+                overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsfprod"
+              

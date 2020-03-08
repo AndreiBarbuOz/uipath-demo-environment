@@ -8,10 +8,10 @@
     "password": {
       "type": "string"
     },
-    "galleryName": {
+    "galleryImageDefinitionName": {
       "type": "string"
     },
-    "galleryImageDefinitionName": {
+    "galleryName": {
       "type": "string"
     },
     "resourceTags": {
@@ -160,14 +160,21 @@
             }
           ]
         }
-      },
-      "identity": {
-        "type": "UserAssigned",
-        "userAssignedIdentities": {
-          "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/','dsftest-msi')]": {
-          }
-        }
       }
     }
-  ]
+  ],
+  "outputs": {
+    "OrchestratorVMUser": {
+      "value": "[parameters('username')]",
+      "type": "string"
+    },
+    "OrchestratorVMPass": {
+      "value": "[parameters('password')]",
+      "type": "string"
+    },
+    "OrchestratorFQDN": {
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))).dnsSettings.fqdn]",
+      "type": "string"
+    }
+  }
 }

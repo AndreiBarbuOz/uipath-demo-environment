@@ -38,7 +38,8 @@
       "defaultValue": "https://github.com/AndreiBarbuOz/uipath-demo-environment.git"
     },
     "artifactBranch": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "master"
     },
     "autoShutdownPolicyTime": {
       "type": "string"
@@ -115,8 +116,9 @@
       "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
       "apiVersion": "2018-11-30",
       "location": "[resourceGroup().location]",
-      "properties": {}
-    },    
+      "properties": {
+      }
+    },
     {
       "apiVersion": "2018-10-15-preview",
       "type": "Microsoft.DevTestLab/labs",
@@ -172,7 +174,7 @@
           "properties": {
             "uri": "[parameters('artifactRepo')]",
             "folderPath": "/Artifacts",
-
+            "armTemplateFolderPath": "/Environments",
             "branchRef": "[parameters('artifactBranch')]",
             "displayName": "Configuration",
             "securityToken": "[parameters('gitToken')]",
