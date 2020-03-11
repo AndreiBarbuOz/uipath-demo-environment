@@ -10,7 +10,7 @@
     }
   },
   "variables": {
-    "vmName": "[uniqueString(resourceGroup().id, subscription().id, parameters('userName'))]",
+    "vmName": "[resourceGroup().name]",
     "addressPrefix": "10.1.0.0/16",
     "subnetPrefix": "10.1.0.0/24",
     "nicName": "[concat(variables('vmname'), '-nic' )]",
