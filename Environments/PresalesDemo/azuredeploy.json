@@ -29,7 +29,7 @@
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[toLower(uniqueString(resourceGroup().id))]"
+          "domainNameLabel": "[concat('a',toLower(uniqueString(resourceGroup().id)))]"
         }
       }
     },
