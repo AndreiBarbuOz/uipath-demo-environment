@@ -174,8 +174,9 @@
           "type": "extensions",
           "apiVersion": "2019-03-01",
           "location": "[resourceGroup().location]",
-          "tags": {
-          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
+          ],
           "properties": {
             "publisher": "UiPath",
             "type": "CustomScriptExtension",
