@@ -7,6 +7,27 @@
     },
     "password": {
       "type": "string"
+    },
+    "ms_account_user": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The Microsoft account email from cdx.transform.microsoft.com - DO NOT use your UiPath account or IT gets a heart attack"
+      }
+    },
+    "ms_account_pw": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The Microsoft account password from cdx.transform.microsoft.com"
+      }
+    },
+    "autoarm_processes": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Demo processes for which you want to automatically run the arming procedure. Use a comma-separated list"
+      }
     }
   },
   "variables": {
@@ -18,6 +39,7 @@
     "publicIPAddressName": "[concat(variables('vmname'), '-pip' )]",
     "virtualNetworkName": "[concat(variables('vmname'), '-vnet')]",
     "subnetName": "[concat(variables('vmname'),'-subnet')]",
+    "configExtensionName": "[concat(variables('vmName'), '-config')]",
     "vmSize": "Standard_D3_v2"
   },
   "resources": [
@@ -129,7 +151,7 @@
         },
         "storageProfile": {
           "imageReference": {
-            "id": "[resourceId('Microsoft.Compute/galleries/images', 'DSF_sig', 'presales-demo')]"
+            "id": "[resourceId('Microsoft.Compute/galleries/images', 'dsftest_sig', 'presales-demo')]"
           },
           "osDisk": {
             "createOption": "FromImage",
@@ -145,7 +167,30 @@
             }
           ]
         }
-      }
+      },
+      "resources": [
+        {
+          "name": "[variables('configExtensionName')]",
+          "type": "extensions",
+          "apiVersion": "2019-03-01",
+          "location": "[resourceGroup().location]",
+          "tags": {
+          },
+          "properties": {
+            "publisher": "UiPath",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.0",
+            "settings": {
+              "fileUris": [
+                "https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/test/config/Artifacts/configure/config.py",
+                "https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/test/config/Artifacts/configure/orch_setup.py"
+              ],
+              "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', parameters('autoarm_processes'), '\"') ]"
+            }
+          }
+        }
+      ]
+
     }
   ],
   "outputs": {
