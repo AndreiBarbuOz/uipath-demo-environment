@@ -178,9 +178,9 @@
             "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
           ],
           "properties": {
-            "publisher": "UiPath",
+            "publisher": "Microsoft.Compute",
             "type": "CustomScriptExtension",
-            "typeHandlerVersion": "1.0",
+            "typeHandlerVersion": "1.10",
             "settings": {
               "fileUris": [
                 "https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/test/config/Artifacts/configure/config.py",
