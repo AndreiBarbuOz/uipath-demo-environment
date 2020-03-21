@@ -63,7 +63,7 @@
             "value": "[parameters('password')]"
           },
           "ms_account_user": {
-            "value": "[parameters('ma_account_user')]"
+            "value": "[parameters('ms_account_user')]"
           },
           "ms_account_pw": {
             "value": "[parameters('ms_account_pw')]"
