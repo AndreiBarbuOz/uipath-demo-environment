@@ -69,7 +69,7 @@
             "value": "[parameters('ms_account_pw')]"
           },
           "autoarm_processes": {
-            "value": "[parameters('autoarm_process')]"
+            "value": "[parameters('autoarm_processes')]"
           },
           "conn_string": {
             "reference": {
