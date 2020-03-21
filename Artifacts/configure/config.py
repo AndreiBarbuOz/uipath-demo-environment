@@ -57,11 +57,10 @@ def main(args):
     # translate arguments
     autoarm_list = args.autoarm.split(",")
     # fetch config and connect robot
-    config = get_config(local_config['mongoDBConnectionString'])
+    config = get_config(args.conn_string)
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
                                      config['refreshToken'], config['orchUrl'], config['serviceLogicalName'], config['accountName'])
 
-    del local_config['mongoDBConnectionString']
     local_config['FolderName'] = orch.folder_name
     local_config['OrganizationUnitID'] = orch.organization_unit_id
     local_config['UniqueUser'] = orch.sap_user_name
@@ -84,6 +83,7 @@ if __name__ == '__main__':
     parser.add_argument("--ms_account_user", action="store", dest="ms_account_user")
     parser.add_argument("--ms_account_pw", action="store", dest="ms_account_pw")
     parser.add_argument("--autoarm", action="store", dest="autoarm")
+    parser.add_argument("--conn_string", action="store", dest="conn_string")
 
     args = parser.parse_args()
     main(args)

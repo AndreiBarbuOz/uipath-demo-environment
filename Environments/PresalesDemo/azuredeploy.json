@@ -29,18 +29,11 @@
         "description": "Demo processes for which you want to automatically run the arming procedure. Use a comma-separated list"
       }
     },
-    "principal_id": {
+    "conn_string": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "[[conn_string]]",
       "metadata": {
         "description": "principal id"
-      }
-    },
-    "client_id": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "client id"
       }
     }
   },
@@ -209,7 +202,7 @@
                 "https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/test/config/Artifacts/configure/config.py",
                 "https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/test/config/Artifacts/configure/orch_setup.py"
               ],
-              "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', parameters('autoarm_processes'), '\"') ]"
+              "commandToExecute": "[concat('python ./config.py --conn_string \"', parameters('conn_string'),'\" --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', parameters('autoarm_processes'), '\"') ]"
             }
           }
         }
