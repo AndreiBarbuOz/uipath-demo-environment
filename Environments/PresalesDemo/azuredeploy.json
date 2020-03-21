@@ -28,13 +28,6 @@
       "metadata": {
         "description": "Demo processes for which you want to automatically run the arming procedure. Use a comma-separated list"
       }
-    },
-    "conn_string": {
-      "type": "string",
-      "defaultValue": "[[connstring]]",
-      "metadata": {
-        "description": "principal id"
-      }
     }
   },
   "variables": {
@@ -51,153 +44,43 @@
   },
   "resources": [
     {
-      "type": "Microsoft.Network/publicIPAddresses",
-      "apiVersion": "2018-11-01",
-      "name": "[variables('publicIPAddressName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "publicIPAllocationMethod": "Dynamic",
-        "dnsSettings": {
-          "domainNameLabel": "[concat('a',toLower(uniqueString(resourceGroup().id)))]"
-        }
-      }
-    },
-    {
-      "comments": "Default Network Security Group for template",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2019-08-01",
-      "name": "[variables('networkSecurityGroupName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "default-allow-3389",
-            "properties": {
-              "priority": 1000,
-              "access": "Allow",
-              "direction": "Inbound",
-              "destinationPortRange": "3389",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/virtualNetworks",
-      "apiVersion": "2018-11-01",
-      "name": "[variables('virtualNetworkName')]",
-      "location": "[resourceGroup().location]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-05-01",
+      "name": "presales",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
       ],
       "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[variables('addressPrefix')]"
-          ]
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/andreibarbuoz/demo-presales-environment/test/config/templates/presales.json",
+          "contentVersion": "1.0.0.0"
         },
-        "subnets": [
-          {
-            "name": "[variables('subnetName')]",
-            "properties": {
-              "addressPrefix": "[variables('subnetPrefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/networkInterfaces",
-      "apiVersion": "2018-11-01",
-      "name": "[variables('nicName')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
-        "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
-      ],
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
-              },
-              "subnet": {
-                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines",
-      "apiVersion": "2018-10-01",
-      "name": "[variables('vmName')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
-      ],
-      "properties": {
-        "hardwareProfile": {
-          "vmSize": "[variables('vmSize')]"
-        },
-        "osProfile": {
-          "computerName": "[variables('vmName')]",
-          "adminUsername": "[parameters('userName')]",
-          "adminPassword": "[parameters('password')]"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "id": "[resourceId('Microsoft.Compute/galleries/images', 'dsftest_sig', 'presales-demo')]"
+        "parameters": {
+          "username": {
+            "value": "[parameters('username')]"
           },
-          "osDisk": {
-            "createOption": "FromImage",
-            "managedDisk": {
-              "storageAccountType": "StandardSSD_LRS"
-            }
-          }
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
-            }
-          ]
-        }
-      },
-      "resources": [
-        {
-          "name": "[variables('configExtensionName')]",
-          "type": "extensions",
-          "apiVersion": "2019-03-01",
-          "location": "[resourceGroup().location]",
-          "dependsOn": [
-            "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
-          ],
-          "properties": {
-            "publisher": "Microsoft.Compute",
-            "type": "CustomScriptExtension",
-            "typeHandlerVersion": "1.10",
-            "settings": {
-              "fileUris": [
-                "https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/test/config/Artifacts/configure/config.py",
-                "https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/test/config/Artifacts/configure/orch_setup.py"
-              ],
-              "commandToExecute": "[concat('python ./config.py --conn_string \"', parameters('conn_string'),'\" --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', parameters('autoarm_processes'), '\"') ]"
+          "password": {
+            "value": "[parameters('password')]"
+          },
+          "ms_account_user": {
+            "value": "[parameters('ma_account_user')]"
+          },
+          "ms_account_pw": {
+            "value": "[parameters('ms_account_pw')]"
+          },
+          "autoarm_processes": {
+            "value": "[parameters('autoarm_process')]"
+          },
+          "conn_string": {
+            "reference": {
+              "keyVault": {
+                "id": "[resourceId(subscription().id, 'dsf-dev-andrei', 'Microsoft.KeyVault/vaults', 'dsftest-kv')]"
+              },
+              "secretName": "mongo-db-conn-string"
             }
           }
         }
-      ]
+      }
     }
   ],
   "outputs": {
@@ -210,7 +93,7 @@
       "type": "string"
     },
     "vmFqdn": {
-      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))).dnsSettings.fqdn]",
+      "value": "[reference('linkedHaa').outputs.vmFqdn]",
       "type": "string"
     }
   }
