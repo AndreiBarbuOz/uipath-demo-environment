@@ -28,6 +28,20 @@
       "metadata": {
         "description": "Demo processes for which you want to automatically run the arming procedure. Use a comma-separated list"
       }
+    },
+    "principal_id": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "principal id"
+      }
+    },
+    "client_id": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "client id"
+      }
     }
   },
   "variables": {
@@ -140,6 +154,15 @@
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'dsftest-msi')]": {
+            "principalId": "[parameters('principal_id')]",
+            "clientId": "[parameters('client_id')]"
+          }
+        }
+      },
       "properties": {
         "hardwareProfile": {
           "vmSize": "[variables('vmSize')]"
@@ -191,7 +214,6 @@
           }
         }
       ]
-
     }
   ],
   "outputs": {
