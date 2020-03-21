@@ -147,15 +147,6 @@
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
-      "identity": {
-        "type": "UserAssigned",
-        "userAssignedIdentities": {
-          "[resourceId('dsf-dev-andrei', 'Microsoft.ManagedIdentity/userAssignedIdentities', 'dsftest-msi')]":  {
-            "principalId": "[parameters('principal_id')]",
-            "clientId": "[parameters('client_id')]"
-          }
-        }
-      },
       "properties": {
         "hardwareProfile": {
           "vmSize": "[variables('vmSize')]"
