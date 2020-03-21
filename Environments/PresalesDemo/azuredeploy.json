@@ -93,7 +93,7 @@
       "type": "string"
     },
     "vmFqdn": {
-      "value": "[reference('linkedHaa').outputs.vmFqdn]",
+      "value": "[reference('presales').outputs.vmFqdn]",
       "type": "string"
     }
   }
