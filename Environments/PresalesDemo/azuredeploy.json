@@ -52,7 +52,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/andreibarbuoz/demo-presales-environment/test/config/templates/presales.json",
+          "uri": "https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/test/config/templates/presales.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
