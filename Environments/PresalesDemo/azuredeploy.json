@@ -157,7 +157,7 @@
       "identity": {
         "type": "UserAssigned",
         "userAssignedIdentities": {
-          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'dsftest-msi')]": {
+          "[concat(subscription().subscriptionId, '/resourceGroups/dsf-dev-andrei/providers/Microsoft.ManagedIdentity/userAssignedIdentities/dsftest-msi'":  {
             "principalId": "[parameters('principal_id')]",
             "clientId": "[parameters('client_id')]"
           }
