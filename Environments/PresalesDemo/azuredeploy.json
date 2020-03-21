@@ -31,7 +31,7 @@
     },
     "conn_string": {
       "type": "string",
-      "defaultValue": "[[conn_string]]",
+      "defaultValue": "[[connstring]]",
       "metadata": {
         "description": "principal id"
       }
