@@ -74,7 +74,7 @@
           "conn_string": {
             "reference": {
               "keyVault": {
-                "id": "['Microsoft.KeyVault/vaults', 'dsfprod-kv')]"
+                "id": "[resourceId('Microsoft.KeyVault/vaults', 'dsfprod-kv')]"
               },
               "secretName": "mongo-db-conn-string"
             }
