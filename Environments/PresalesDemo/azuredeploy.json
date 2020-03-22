@@ -45,7 +45,7 @@
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2018-05-01",
+      "apiVersion": "2019-10-01",
       "name": "presales",
       "dependsOn": [
       ],
@@ -74,7 +74,7 @@
           "conn_string": {
             "reference": {
               "keyVault": {
-                "id": "[resourceId(subscription().subscriptionId, 'DSF-Presales-RG', 'Microsoft.KeyVault/vaults', 'dsfprod-kv')]"
+                "id": "['Microsoft.KeyVault/vaults', 'dsfprod-kv')]"
               },
               "secretName": "mongo-db-conn-string"
             }
