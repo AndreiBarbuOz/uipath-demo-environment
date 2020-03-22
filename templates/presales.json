@@ -158,7 +158,7 @@
         },
         "storageProfile": {
           "imageReference": {
-            "id": "[resourceId('Microsoft.Compute/galleries/images', 'dsftest_sig', 'presales-demo')]"
+            "id": "[resourceId('Microsoft.Compute/galleries/images', 'dsfprod_sig', 'presales-demo')]"
           },
           "osDisk": {
             "createOption": "FromImage",
