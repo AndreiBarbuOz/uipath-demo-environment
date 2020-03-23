@@ -305,7 +305,7 @@
       "type": "string"
     },
     "vmFqdn": {
-      "value": "[reference('presales').outputs.vmFqdn]",
+      "value": "[reference('presales').outputs.vmFqdn.value]",
       "type": "string"
     }
   }
