@@ -58,9 +58,10 @@ def main(args):
     autoarm_list = args.autoarm.split(",")
     if args.conn_string:
         # fetch config and connect robot
-        config = get_config(args.conn_string)
+        conn_string = args.conn_string
     else:
-        config = get_secret(args.key_vault, 'mongo-db-conn-string')
+        conn_string = get_secret(args.key_vault, 'mongo-db-conn-string')
+    config = get_config(conn_string)
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
                                      config['refreshToken'], config['orchUrl'], config['serviceLogicalName'], config['accountName'])
 
