@@ -51,6 +51,34 @@
       ],
       "properties": {
         "mode": "Incremental",
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "parameters": {
+          "username": {
+            "value": "[parameters('username')]"
+          },
+          "password": {
+            "value": "[parameters('password')]"
+          },
+          "ms_account_user": {
+            "value": "[parameters('ms_account_user')]"
+          },
+          "ms_account_pw": {
+            "value": "[parameters('ms_account_pw')]"
+          },
+          "autoarm_processes": {
+            "value": "[parameters('autoarm_processes')]"
+          },
+          "conn_string": {
+            "reference": {
+              "keyVault": {
+                "id": "[resourceId('Microsoft.KeyVault/vaults', 'dsfprod-kv')]"
+              },
+              "secretName": "mongo-db-conn-string"
+            }
+          }
+        },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
           "contentVersion": "1.0.0.0",
@@ -83,12 +111,7 @@
               }
             },
             "conn_string": {
-              "reference": {
-                "keyVault": {
-                  "id": "[resourceId('Microsoft.KeyVault/vaults', 'dsfprod-kv')]"
-                },
-                "secretName": "mongo-db-conn-string"
-              }
+              "type": "string"
             }
           },
           "variables": {
