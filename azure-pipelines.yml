@@ -2,9 +2,14 @@ variables:
 - group: demo-vm-deploy
 
 trigger:
-- master
-- andrei
-- stefan
+  branches:
+    include:
+      - andrei
+      - stefan
+  pr:
+    branches:
+      include:
+        -master
 
 stages:
 - stage: Build

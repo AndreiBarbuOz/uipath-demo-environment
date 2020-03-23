@@ -56,8 +56,11 @@ def main(args):
 
     # translate arguments
     autoarm_list = args.autoarm.split(",")
-    # fetch config and connect robot
-    config = get_config(args.conn_string)
+    if args.conn_string:
+        # fetch config and connect robot
+        config = get_config(args.conn_string)
+    else:
+        config = get_secret(args.key_vault, 'mongo-db-conn-string')
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
                                      config['refreshToken'], config['orchUrl'], config['serviceLogicalName'], config['accountName'])
 
@@ -73,7 +76,7 @@ def main(args):
 
 
 
-if __name__ == '__main__': 
+if __name__ == '__main__':
     """ This is executed when run from the command line """
     parser = argparse.ArgumentParser(description="Configure UiPath Robot")
 
@@ -84,6 +87,7 @@ if __name__ == '__main__':
     parser.add_argument("--ms_account_pw", action="store", dest="ms_account_pw")
     parser.add_argument("--autoarm", action="store", dest="autoarm")
     parser.add_argument("--conn_string", action="store", dest="conn_string")
+    parser.add_argument("--key_vault", action="store", dest="key_vault")
 
     args = parser.parse_args()
     main(args)
