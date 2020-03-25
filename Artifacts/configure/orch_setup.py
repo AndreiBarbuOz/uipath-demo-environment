@@ -55,6 +55,11 @@ class CloudOrchHelper:
         return requests.post(self._getAbsoluteEndpoint(relative_endpoint),
                           headers=headers, json=body)
 
+    def patch(self, relative_endpoint, body):
+        headers = self._get_default_headers()
+        return requests.patch(self._getAbsoluteEndpoint(relative_endpoint),
+                             headers=headers, json=body)
+
     def get(self, relative_endpoint):
         headers = self._get_default_headers()
         return requests.get(self._getAbsoluteEndpoint(relative_endpoint), headers=headers)
@@ -212,7 +217,7 @@ class CloudOrchHelper:
                 "MachineName": self.machine_name,
                 "Username": self.full_username,
                 "Password": password,
-                "Type": "Development",
+                "Type": "Unattended",
                 "ExecutionSettings": {
                     "LoginToConsole": False,
                     "ResolutionWidth": "1920", 
@@ -227,6 +232,11 @@ class CloudOrchHelper:
         os.system(
             f"\"C:\\Program Files (x86)\\UiPath\\Studio\\UiRobot.exe\" --connect -url {self.orch_url} -key {license_key}")
         return (r["Id"], r["UserId"])
+
+    def patch_robot_development(self, robotId):
+        print("Changing robot into Development type")
+        body = {"Type": "Development"}
+        r = self.patch(f"/odata/Robots({robotId})",body)
 
     def assign_user_role(self, user_id, role_id):
         print("Assigning user role")
@@ -285,9 +295,9 @@ class CloudOrchHelper:
     def create_asset(self, asset_data):
         print(f"Creating asset %s" % asset_data["Name"])
         body = asset_data
-        print(body)
+        # print(body) removed due to security concerns
         r = self.post("/odata/Assets", body=body)
-        print(r.json())
+        # print(r.json()) removed due to security concerns
         return r.json()
     
     def get_role_id(self, role_name):
@@ -319,7 +329,32 @@ class CloudOrchHelper:
             }
         }
         print(body)
-        print(self.post("/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs", body).json())
+        r = self.post("/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs", body)
+        r = r.json()
+        print(r)
+        return r["value"][0]["Id"]
+
+
+    def wait_for_processes(self, process_id_set):
+        print("Waiting for processes")
+
+        any_job_running = True
+        while any_job_running:
+            any_job_running = False
+            for pid in process_id_set:
+                any_job_running = any_job_running or self.is_job_still_running(pid)
+            if any_job_running: 
+                print("Still jobs running. Sleeping")
+                time.sleep(10)
+
+    def get_job(self, job_id):
+        r = self.get(f"/odata/Jobs({job_id})")
+        r = r.json()
+        return r
+
+    def is_job_still_running(self, job_id):
+        return self.get_job(job_id)["State"] not in ("Successful", "Stopped", "Faulted")
+
 
 def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, process_list, autoarm_list, asset_list, roles):
     folder_id = orchHelper.create_folder()
@@ -368,14 +403,21 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
 
 
     # autostart by default
+    process_ids_to_merge = set()
     for (release_key, process_args) in release_keys:
-        orchHelper.start_process(release_key, robot_id, process_args)
+        process_ids_to_merge.add(orchHelper.start_process(release_key, robot_id, process_args))
 
     # auto-arm based on arguments
     for release_key in autoarm_release_keys:
-        orchHelper.start_process(release_key, robot_id, "{'Mode': 'arm'}")
+        process_ids_to_merge.add(orchHelper.start_process(release_key, robot_id, "{'Mode': 'arm'}"))
+
+    orchHelper.wait_for_processes(process_ids_to_merge)
+    orchHelper.patch_robot_development(robot_id)
 
 
 def setup_dsf_folder_dev(orchHelper, password, ms_account_user, ms_account_pw, process_list, autoarm_list, asset_list, roles):
-    orchHelper.organization_unit_id = "2988"
-    orchHelper.invite_user(ms_account_user, roles)
+    orchHelper.organization_unit_id = "3060"
+    #process_ids_to_merge = set()
+    #process_ids_to_merge.add(orchHelper.start_process("04a4ad4c-1b4b-4d10-a4ca-e5b9664738dd", 4201, ""))
+    #orchHelper.wait_for_processes(process_ids_to_merge)
+    orchHelper.patch_robot_development(4201)
