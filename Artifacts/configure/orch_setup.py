@@ -339,16 +339,25 @@ class CloudOrchHelper:
         print("Waiting for processes")
 
         any_job_running = True
+        set_copy = process_id_set.copy() # use buffering as sets cannot be changed while being iterated over
         while any_job_running:
             any_job_running = False
-            for pid in process_id_set:
+            any_process_removed = False
+            for pid in set_copy:
                 if self.is_job_still_running(pid):
                     any_job_running = True
                 else:
                     process_id_set.remove(pid)
+                    any_process_removed = True
+            
             if any_job_running: 
                 print("Still have jobs running. Sleeping")
                 time.sleep(30)
+
+                # update copy for next poll
+                if any_process_removed:
+                    set_copy = process_id_set.copy()
+
 
     def get_job(self, job_id):
         r = self.get(f"/odata/Jobs({job_id})")
