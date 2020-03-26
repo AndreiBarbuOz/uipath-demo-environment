@@ -342,10 +342,13 @@ class CloudOrchHelper:
         while any_job_running:
             any_job_running = False
             for pid in process_id_set:
-                any_job_running = any_job_running or self.is_job_still_running(pid)
+                if self.is_job_still_running(pid):
+                    any_job_running = True
+                else:
+                    process_id_set.remove(pid)
             if any_job_running: 
-                print("Still jobs running. Sleeping")
-                time.sleep(10)
+                print("Still have jobs running. Sleeping")
+                time.sleep(30)
 
     def get_job(self, job_id):
         r = self.get(f"/odata/Jobs({job_id})")
@@ -417,7 +420,7 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
 
 def setup_dsf_folder_dev(orchHelper, password, ms_account_user, ms_account_pw, process_list, autoarm_list, asset_list, roles):
     orchHelper.organization_unit_id = "3060"
-    #process_ids_to_merge = set()
+    process_ids_to_merge = set()
     #process_ids_to_merge.add(orchHelper.start_process("04a4ad4c-1b4b-4d10-a4ca-e5b9664738dd", 4201, ""))
     #orchHelper.wait_for_processes(process_ids_to_merge)
     orchHelper.patch_robot_development(4201)
