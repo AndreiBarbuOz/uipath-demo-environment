@@ -413,6 +413,15 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
         "StringValue": orchHelper.sap_user_name
     })
 
+    # orchestrator URL
+    orchHelper.create_asset({
+        "Name": "DSF_OrchURL",
+        "ValueScope": "Global",
+        "ValueType": "Text",
+        "StringValue": orchHelper.orch_url
+    })
+
+
 
     # autostart by default
     process_ids_to_merge = set()
