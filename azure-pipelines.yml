@@ -41,7 +41,7 @@ stages:
         resourceGroupName: $(testResourceGroupName)
         templateLocation: 'Linked artifact'
         csmFile: $(Build.SourcesDirectory)/Environments/PresalesDemo/azuredeploy.json
-        csmParametersFile: $(Build.SourcesDirectory)/Environments/PresalesDemo/azuredeploy.parameters.json
+        csmParametersFile: $(Build.SourcesDirectory)/Environments/PresalesDemo/presales.parameters.json
         deploymentMode: 'Validation'
     - publish: $(Build.SourcesDirectory)
       artifact: drop
