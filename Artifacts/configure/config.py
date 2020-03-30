@@ -60,9 +60,6 @@ def main(args):
     config = get_config(local_config['mongoDBConnectionString'])
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
                                      config['refreshToken'], config['orchUrl'], config['serviceLogicalName'], config['accountName'])
-    orch_setup.setup_dsf_folder(
-        orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], autoarm_list, config['assets'], config['roles'])
-
 
     del local_config['mongoDBConnectionString']
     local_config['FolderName'] = orch.folder_name
@@ -70,6 +67,11 @@ def main(args):
     local_config['UniqueUser'] = orch.sap_user_name
     local_config['MSAccount'] = args.ms_account_user
     write_local_config(local_config_path, local_config)
+
+    orch_setup.setup_dsf_folder(
+        orch, args.password, args.ms_account_user, args.ms_account_pw, config['processes'], autoarm_list, config['assets'], config['roles'])
+
+
 
 
 if __name__ == '__main__': 
