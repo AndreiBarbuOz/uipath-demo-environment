@@ -4,7 +4,6 @@ variables:
 trigger:
   - andrei
   - stefan
-  - master
 
 stages:
 - stage: Build
@@ -76,7 +75,7 @@ stages:
 - stage: DeployProd
   displayName: Deploy to Prod
   dependsOn: DeployUAT
-  condition: succeeded()
+  condition: and( succeeded(), eq($('System.PullRequest.TargetBranch'), 'refs/heads/master'), eq($(Build.Reason), 'PullRequest') ))
   jobs:
     - deployment: deployProd
       environment: prod

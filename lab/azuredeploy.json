@@ -131,7 +131,8 @@
         "Owner": "[parameters('tags').Owner]",
         "Project": "[parameters('tags').Project]",
         "Env": "[parameters('projectName')]",
-        "Rg": "[resourceGroup().name]"
+        "Rg": "[resourceGroup().name]",
+        "Branch": "[parameters('artifactBranch')]"
       },
       "properties": {
         "vmCreationResourceGroupId": "[resourceGroup().id]"

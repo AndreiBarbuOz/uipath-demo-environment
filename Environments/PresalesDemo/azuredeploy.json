@@ -235,7 +235,7 @@
                 },
                 "storageProfile": {
                   "imageReference": {
-                    "id": "[resourceId('Microsoft.Compute/galleries/images', 'dsfprod_sig', 'presales-demo')]"
+                    "id": "[resourceId( 'Microsoft.Compute/galleries/images', concat(resourceGroup().tags.Env, '_sig'), 'presales-demo' )]"
                   },
                   "osDisk": {
                     "createOption": "FromImage",
@@ -267,8 +267,8 @@
                     "typeHandlerVersion": "1.10",
                     "settings": {
                       "fileUris": [
-                        "https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/test/config/Artifacts/configure/config.py",
-                        "https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/test/config/Artifacts/configure/orch_setup.py"
+                        "[concat('https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/', resourceGroup().tags.Branch, '/Artifacts/configure/config.py')]",
+                        "[concat('https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/', resourceGroup().tags.Branch, '/Artifacts/configure/orch_setup.py')]"
                       ],
                       "commandToExecute": "[concat('python ./config.py --conn_string \"', parameters('conn_string'),'\" --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', parameters('autoarm_processes'), '\"') ]"
                     }
