@@ -75,7 +75,7 @@ stages:
 - stage: DeployPrUat
   displayName: Deploy to UAT
   dependsOn: Build
-  condition: and( succeeded(),eq( variables['system.pullRequest.targetBranch'], 'refs/heads/master'), eq( variables['Build.Reason'], 'PullRequest'))
+  condition: and( succeeded(),eq( variables['system.pullRequest.targetBranch'], 'master'), eq( variables['Build.Reason'], 'PullRequest'))
   jobs:
     - deployment: deployPrUat
       environment: uat
@@ -97,7 +97,7 @@ stages:
                 csmFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.json
                 csmParametersFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.parameters.json
                 deploymentMode: 'Incremental'
-                overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsftest" -project $(projectName) -owner $(ownerEmail)
+                overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsftest" -project $(projectName) -owner $(ownerEmail) -artifactBranch $(System.PullRequest.SourceBranch)
 
 
 - stage: DeployProd
