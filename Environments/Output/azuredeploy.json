@@ -33,7 +33,7 @@
           "conn_string": {
             "reference": {
               "keyVault": {
-                "id": "[resourceId([resourceGroup().tags.Rg],'Microsoft.KeyVault/vaults', [concat(resourceGroup().tags.ProjectName, '-kv')]"
+                "id": "[resourceId(resourceGroup().tags.Rg, 'Microsoft.KeyVault/vaults', concat(resourceGroup().tags.ProjectName, '-kv'))]"
               },
               "secretName": "mongo-db-conn-string"
             }
