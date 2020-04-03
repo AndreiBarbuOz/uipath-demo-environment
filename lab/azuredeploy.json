@@ -44,8 +44,11 @@
     "autoShutdownPolicyTime": {
       "type": "string"
     },
-    "tags": {
-      "type": "object"
+    "owner": {
+      "type": "string"
+    },
+    "project": {
+      "type": "string"
     }
   },
   "variables": {
@@ -128,8 +131,8 @@
       "name": "[variables('devTestLabs')]",
       "location": "[resourceGroup().location]",
       "tags": {
-        "Owner": "[parameters('tags').Owner]",
-        "Project": "[parameters('tags').Project]",
+        "Owner": "[parameters('owner')]",
+        "Project": "[parameters('project')]",
         "Env": "[parameters('projectName')]",
         "Rg": "[resourceGroup().name]",
         "Branch": "[parameters('artifactBranch')]"
