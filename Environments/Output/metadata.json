@@ -1,0 +1,6 @@
+{
+    "itemDisplayName": "Test Output",
+    "description": "Deploy a presales demo VM",
+    "githubUsername": "AndreiBarbuOz",
+    "summary": "Deploy a presales demo VM inside the devtest lab"
+}
