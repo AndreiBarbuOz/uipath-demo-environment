@@ -102,7 +102,7 @@ stages:
 
 - stage: DeployProd
   displayName: Deploy to Prod
-  dependsOn: DeployUAT
+  dependsOn: DeployPrUat
   condition: and( succeeded(),eq( variables['system.pullRequest.targetBranch'], 'refs/heads/master'), eq( variables['Build.Reason'], 'PullRequest'))
   jobs:
     - deployment: deployProd
