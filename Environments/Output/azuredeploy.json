@@ -29,6 +29,14 @@
           },
           "input2": {
             "value": "[parameters('input2')]"
+          },
+          "conn_string": {
+            "reference": {
+              "keyVault": {
+                "id": "[resourceId([resourceGroup().tags.Rg],'Microsoft.KeyVault/vaults', [concat(resourceGroup().tags.ProjectName, '-kv')]"
+              },
+              "secretName": "mongo-db-conn-string"
+            }
           }
         },
         "template": {
@@ -40,6 +48,9 @@
             },
             "input2": {
               "type": "string"
+            },
+            "conn_string": {
+              "type": "string"
             }
           },
           "variables": {},
@@ -47,6 +58,10 @@
           "outputs": {
             "resourceGroupOutput": {
               "value": "[resourceGroup()]",
+              "type": "object"
+            },
+            "conn_string": {
+              "value": "[parameters('conn_string')]",
               "type": "object"
             }
           }
