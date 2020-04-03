@@ -7,6 +7,7 @@ import subprocess
 import argparse
 import json
 import os
+import os.path
 import time
 import shutil
 
@@ -31,9 +32,12 @@ def get_secret(key_vault, key_name, key_version):
 
 
 def get_local_config(path):
-    with open(path) as json_file:
-        data = json.load(json_file)
-    return data
+    if os.path.exists(path):
+        with open(path) as json_file:
+            data = json.load(json_file)
+        return data
+    else:
+        return dict()
 
 def write_local_config(path, data):
     with open(path, 'w') as json_file:
@@ -56,12 +60,15 @@ def main(args):
 
     # translate arguments
     autoarm_list = args.autoarm.split(",")
-    # fetch config and connect robot
-    config = get_config(local_config['mongoDBConnectionString'])
+    if args.conn_string:
+        # fetch config and connect robot
+        conn_string = args.conn_string
+    else:
+        conn_string = get_secret(args.key_vault, 'mongo-db-conn-string')
+    config = get_config(conn_string)
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
                                      config['refreshToken'], config['orchUrl'], config['serviceLogicalName'], config['accountName'])
 
-    del local_config['mongoDBConnectionString']
     local_config['FolderName'] = orch.folder_name
     local_config['OrganizationUnitID'] = orch.organization_unit_id
     local_config['UniqueUser'] = orch.sap_user_name
@@ -74,7 +81,7 @@ def main(args):
 
 
 
-if __name__ == '__main__': 
+if __name__ == '__main__':
     """ This is executed when run from the command line """
     parser = argparse.ArgumentParser(description="Configure UiPath Robot")
 
@@ -84,6 +91,8 @@ if __name__ == '__main__':
     parser.add_argument("--ms_account_user", action="store", dest="ms_account_user")
     parser.add_argument("--ms_account_pw", action="store", dest="ms_account_pw")
     parser.add_argument("--autoarm", action="store", dest="autoarm")
+    parser.add_argument("--conn_string", action="store", dest="conn_string")
+    parser.add_argument("--key_vault", action="store", dest="key_vault")
 
     args = parser.parse_args()
     main(args)

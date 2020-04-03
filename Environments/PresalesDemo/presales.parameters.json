@@ -2,17 +2,20 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "userName": {
+        "username": {
             "value": "vm-user"
         },
         "password": {
             "value": "vm-password"
         },
-        "galleryImageDefinitionName": {
-            "value": "presales-demo"
+        "ms_account_user": {
+            "value": "vm-user"
         },
-        "galleryName": {
-            "value": "sample-gallery"
+        "ms_account_pw": {
+            "value": "vm-user"
+        },
+        "autoarm_processes": {
+            "value": "vm-user"
         }
     }
 }

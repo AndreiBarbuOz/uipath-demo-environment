@@ -4,3 +4,4 @@ util/DeleteFolder_presales.ps1
 \.vscode/*
 Pipfile.lock
 __pycache__
+\.idea/*
