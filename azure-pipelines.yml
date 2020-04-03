@@ -4,6 +4,7 @@ variables:
 trigger:
   - andrei
   - stefan
+  - master
 
 stages:
 - stage: Build
