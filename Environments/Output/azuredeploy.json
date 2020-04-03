@@ -62,7 +62,7 @@
             },
             "conn_string": {
               "value": "[parameters('conn_string')]",
-              "type": "object"
+              "type": "string"
             }
           }
         }
