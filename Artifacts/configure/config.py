@@ -7,6 +7,7 @@ import subprocess
 import argparse
 import json
 import os
+import os.path
 import time
 import shutil
 
@@ -31,9 +32,12 @@ def get_secret(key_vault, key_name, key_version):
 
 
 def get_local_config(path):
-    with open(path) as json_file:
-        data = json.load(json_file)
-    return data
+    if os.path.exists(path):
+        with open(path) as json_file:
+            data = json.load(json_file)
+        return data
+    else:
+        return dict()
 
 def write_local_config(path, data):
     with open(path, 'w') as json_file:
