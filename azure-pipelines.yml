@@ -45,12 +45,12 @@ stages:
     - publish: $(Build.SourcesDirectory)
       artifact: drop
       displayName: Publish all sources
-- stage: DeployUAT
-  displayName: Deploy to UAT
+- stage: DeployDevUat
+  displayName: Deploy dev branch to UAT
   dependsOn: Build
-  condition: succeeded()
+  condition: and( succeeded(), not( eq( variables['Build.Reason'], 'PullRequest')))
   jobs:
-    - deployment: deployUAT
+    - deployment: deployDevUat
       environment: uat
       pool:
         vmImage: 'ubuntu-latest'
@@ -71,6 +71,34 @@ stages:
                 csmParametersFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.parameters.json
                 deploymentMode: 'Incremental'
                 overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsftest" -project $(projectName) -owner $(ownerEmail) -artifactBranch $(Build.SourceBranchName)
+
+- stage: DeployPrUat
+  displayName: Deploy to UAT
+  dependsOn: Build
+  condition: and( succeeded(),eq( variables['system.pullRequest.targetBranch'], 'refs/heads/master'), eq( variables['Build.Reason'], 'PullRequest'))
+  jobs:
+    - deployment: deployPrUat
+      environment: uat
+      pool:
+        vmImage: 'ubuntu-latest'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - download: current
+              artifact: drop
+              displayName: Download sources
+            - task: AzureResourceGroupDeployment@2
+              displayName: deploy lab to test
+              inputs:
+                azureSubscription: $(testAzureConnection)
+                resourceGroupName: $(testResourceGroupName)
+                templateLocation: 'Linked artifact'
+                csmFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.json
+                csmParametersFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.parameters.json
+                deploymentMode: 'Incremental'
+                overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsftest" -project $(projectName) -owner $(ownerEmail)
+
 
 - stage: DeployProd
   displayName: Deploy to Prod
@@ -97,5 +125,5 @@ stages:
                 csmFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.json
                 csmParametersFile: $(Pipeline.Workspace)/drop/lab/azuredeploy.parameters.json
                 deploymentMode: 'Incremental'
-                overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsfprod"
+                overrideParameters: -tenantId $(tenantId) -objectId $(objectId) -gitToken $(githubToken) -projectName "dsfprod" -project $(projectName) -owner $(ownerEmail)
               
