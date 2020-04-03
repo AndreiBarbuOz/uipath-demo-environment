@@ -26,10 +26,10 @@
     "autoShutdownPolicyTime": {
       "value": "0000"
     },
-    "Owner": {
+    "owner": {
       "value": "john.doe@uipath.com"
     },
-    "Project": {
+    "project": {
       "value": "DSF"
     }
   }
