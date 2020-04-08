@@ -27,7 +27,13 @@
         "description": "Git Token to access artifact for devtest labs"
       }
     },
-    "sharedImageName": {
+    "demoSharedImageName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name for the shared image"
+      }
+    },
+    "testingSharedImageName": {
       "type": "string",
       "metadata": {
         "description": "Name for the shared image"
@@ -62,7 +68,8 @@
     "cosmosDbName": "[concat(parameters('projectName'), '-cdb')]",
     "sharedImageGalleryName": "[concat(parameters('projectName'), '_sig')]",
     "dtlSharedImageGalleryName": "[concat(parameters('projectName'), '_sig')]",
-    "shareImageName": "[parameters('sharedImageName')]",
+    "demoSharedImageName": "[parameters('demoSharedImageName')]",
+    "testingSharedImageName": "[parameters('testingSharedImageName')]",
     "userAssignedIdentity": "[concat(parameters('projectName'), '-msi')]"
   },
   "resources": [
@@ -358,7 +365,7 @@
         {
           "type": "images",
           "apiVersion": "2019-03-01",
-          "name": "[variables('shareImageName')]",
+          "name": "[variables('demoSharedImageName')]",
           "location": "[resourceGroup().location]",
           "dependsOn": [
             "[variables('sharedImageGalleryName')]"
@@ -370,6 +377,34 @@
               "publisher": "UiPath",
               "offer": "uipath-presales-demo",
               "sku": "presales-demo"
+            },
+            "recommended": {
+              "vCPUs": {
+                "min": 2,
+                "max": 4
+              },
+              "memory": {
+                "min": 8,
+                "max": 16
+              }
+            }
+          }
+        },
+        {
+          "type": "images",
+          "apiVersion": "2019-03-01",
+          "name": "[variables('testingSharedImageName')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[variables('sharedImageGalleryName')]"
+          ],
+          "properties": {
+            "osType": "Windows",
+            "osState": "Generalized",
+            "identifier": {
+              "publisher": "UiPath",
+              "offer": "uipath-presales-testing-demo",
+              "sku": "presales-testing-demo"
             },
             "recommended": {
               "vCPUs": {
@@ -413,7 +448,7 @@
     },
     "sharedImageId": {
       "type": "string",
-      "value": "[concat(resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs')), '/sharedgalleries/', variables('dtlSharedImageGalleryName'), '/sharedimages/', variables('shareImageName') )]"
+      "value": "[concat(resourceId('Microsoft.DevTestLab/labs', variables('devTestLabs')), '/sharedgalleries/', variables('dtlSharedImageGalleryName'), '/sharedimages/', variables('demoSharedImageName') )]"
     }
   }
 }

@@ -7,27 +7,6 @@
     },
     "password": {
       "type": "string"
-    },
-    "ms_account_user": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "The Microsoft account email from cdx.transform.microsoft.com - DO NOT use your UiPath account or IT gets a heart attack"
-      }
-    },
-    "ms_account_pw": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "The Microsoft account password from cdx.transform.microsoft.com"
-      }
-    },
-    "autoarm_processes": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Demo processes for which you want to automatically run the arming procedure. Use a comma-separated list"
-      }
     }
   },
   "variables": {
@@ -61,15 +40,6 @@
           "password": {
             "value": "[parameters('password')]"
           },
-          "ms_account_user": {
-            "value": "[parameters('ms_account_user')]"
-          },
-          "ms_account_pw": {
-            "value": "[parameters('ms_account_pw')]"
-          },
-          "autoarm_processes": {
-            "value": "[parameters('autoarm_processes')]"
-          },
           "conn_string": {
             "reference": {
               "keyVault": {
@@ -88,27 +58,6 @@
             },
             "password": {
               "type": "string"
-            },
-            "ms_account_user": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "The Microsoft account email from cdx.transform.microsoft.com - DO NOT use your UiPath account or IT gets a heart attack"
-              }
-            },
-            "ms_account_pw": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "The Microsoft account password from cdx.transform.microsoft.com"
-              }
-            },
-            "autoarm_processes": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Demo processes for which you want to automatically run the arming procedure. Use a comma-separated list"
-              }
             },
             "conn_string": {
               "type": "string"
@@ -235,7 +184,7 @@
                 },
                 "storageProfile": {
                   "imageReference": {
-                    "id": "[resourceId( resourceGroup().tags.Rg, 'Microsoft.Compute/galleries/images', concat(resourceGroup().tags.Env, '_sig'), 'presales-demo' )]"
+                    "id": "[resourceId( resourceGroup().tags.Rg, 'Microsoft.Compute/galleries/images', concat(resourceGroup().tags.Env, '_sig'), 'testing-demo' )]"
                   },
                   "osDisk": {
                     "createOption": "FromImage",
@@ -270,7 +219,7 @@
                         "[concat('https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/', resourceGroup().tags.Branch, '/Artifacts/configure/config.py')]",
                         "[concat('https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/', resourceGroup().tags.Branch, '/Artifacts/configure/orch_setup.py')]"
                       ],
-                      "commandToExecute": "[concat('python ./config.py --conn_string \"', parameters('conn_string'),'\" --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', parameters('autoarm_processes'), '\"') ]"
+                      "commandToExecute": "[concat('python ./config.py --conn_string \"', parameters('conn_string'),'\" --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"' ) ]"
                     }
                   }
                 }

@@ -42,9 +42,19 @@ stages:
         csmFile: $(Build.SourcesDirectory)/Environments/PresalesDemo/azuredeploy.json
         csmParametersFile: $(Build.SourcesDirectory)/Environments/PresalesDemo/presales.parameters.json
         deploymentMode: 'Validation'
+    - task: AzureResourceGroupDeployment@2
+      displayName: validate env template
+      inputs:
+        azureSubscription: $(testAzureConnection)
+        resourceGroupName: $(testResourceGroupName)
+        templateLocation: 'Linked artifact'
+        csmFile: $(Build.SourcesDirectory)/Environments/TestingAutomation/azuredeploy.json
+        csmParametersFile: $(Build.SourcesDirectory)/Environments/TestingAutomation/testing.parameters.json
+        deploymentMode: 'Validation'
     - publish: $(Build.SourcesDirectory)
       artifact: drop
       displayName: Publish all sources
+
 - stage: DeployDevUat
   displayName: Deploy dev branch to UAT
   dependsOn: Build

@@ -14,8 +14,11 @@
     "projectName": {
       "value": "project-name"
     },
-    "sharedImageName": {
+    "demoSharedImageName": {
       "value": "presales-demo"
+    },
+    "testingSharedImageName": {
+      "value": "testing-demo"
     },
     "artifactRepo": {
       "value": "https://github.com/AndreiBarbuOz/uipath-demo-environment.git"
