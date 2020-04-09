@@ -13,7 +13,7 @@ import shutil
 
 from msrestazure.azure_active_directory import MSIAuthentication
 from azure.mgmt.resource import ResourceManagementClient, SubscriptionClient
-from azure.keyvault import KeyVaultClient
+from azure.keyvault.secrets import SecretClient
 
 import orch_setup 
 
@@ -21,12 +21,12 @@ import orch_setup
 local_config_path = 'c:\\UiPath\\config\\dsf.json'
 temp_config_path = 'c:\\Temp\\configFiles'
 
-def get_secret(key_vault, key_name, key_version):
+def get_secret(key_vault, key_name):
     # Create MSI Authentication
-    credentials = MSIAuthentication()
-    client = KeyVaultClient(credentials)
+    credential = MSIAuthentication()
+    client = SecretClient(vault_url=key_vault, credential=credential)
     
-    secret_bundle = client.get_secret(key_vault, key_name, key_version )
+    secret_bundle = client.get_secret(key_name)
     secret = secret_bundle.value
     return secret
 
@@ -59,7 +59,10 @@ def main(args):
     time.sleep(15)
 
     # translate arguments
-    autoarm_list = args.autoarm.split(",")
+    if args.autoarm:
+        autoarm_list = args.autoarm.split(",")
+    else:
+        autoarm_list = []
     if args.conn_string:
         # fetch config and connect robot
         conn_string = args.conn_string
