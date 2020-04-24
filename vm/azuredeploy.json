@@ -46,9 +46,16 @@
     },
     "autoarmProcesses": {
       "type": "string",
+      "defaultValue": "DSF_Insights",
       "metadata": {
         "description": "Comma-separated list of processes to automatically arm when provisioning the VM"
       }
+    },
+    "key_vault": {
+      "type": "string",
+      "defaultValue": "",
+      "displayName": "Key vault containing connection string",
+      "description": "Key vault containing connection string"
     }
   },
   "variables": {
@@ -101,6 +108,10 @@
               {
                 "name": "autoarm_processes",
                 "value": "[parameters('autoarmProcesses')]"
+              },
+              {
+                "name": "key_vault",
+                "value": "[parameters('key_vault')]"
               }
             ]
           }
