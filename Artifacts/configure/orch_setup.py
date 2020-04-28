@@ -32,7 +32,10 @@ class CloudOrchHelper:
         self.login()
 
     def _getAbsoluteEndpoint(self, relative_endpoint):
-        return self.orch_url + relative_endpoint
+        if relative_endpoint.lstrip("/").startswith("odata"):
+            return f"{self.orch_url}/{self.account_name}/{self.service_logical_name}/{relative_endpoint.lstrip("/")}"
+        else:
+            return f"{self.orch_url} + relative_endpoint
 
     def _get_access_token(self):
         body = {"grant_type": "refresh_token",
@@ -145,7 +148,7 @@ class CloudOrchHelper:
                 "userCreateRequestDtoList": [
                     {
                         "emailId": user_email,
-                        "redirectUrl": self._getAbsoluteEndpoint(f"/{self.account_name}/portal_/loginwithguid")
+                        "redirectUrl": self._getAbsoluteEndpoint(f"/portal_/loginwithguid")
                     }
                 ],
                 "tenantRoleListMap": {
@@ -155,7 +158,7 @@ class CloudOrchHelper:
             }
         }
         r = requests.post(self._getAbsoluteEndpoint(
-            f"/{self.account_name}/portal_/api/users/inviteUsers"), headers=headers, json=body)
+            f"/portal_/api/users/inviteUsers"), headers=headers, json=body)
 
     def _get_user_id_tenant(self, user_email):
         r = self.get(f"/odata/Users/?$filter=EmailAddress eq '{user_email}'")
@@ -185,7 +188,8 @@ class CloudOrchHelper:
             f"/odata/Folders({folder_id})/UiPath.Server.Configuration.OData.RemoveUserFromFolder", body)
 
     def _get_folder_id(self, folder_name):
-        r = self.get(f"/odata/Folders?$filter=DisplayName eq '{folder_name}'")
+        r = self.get(
+            f"/odata/Folders?$filter=DisplayName eq '{folder_name}'")
         print(r.json())
         return r.json()['value'][0]['Id']
 
