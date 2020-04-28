@@ -423,7 +423,7 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
         "Name": "DSF_OrchURL",
         "ValueScope": "Global",
         "ValueType": "Text",
-        "StringValue": orchHelper.orch_url
+        "StringValue": orchHelper._getAbsoluteEndpoint("")
     })
 
 
