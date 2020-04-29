@@ -235,7 +235,7 @@ class CloudOrchHelper:
         print("Connecting robot")
         license_key = r["LicenseKey"]
         os.system(
-            f"\"C:\\Program Files (x86)\\UiPath\\Studio\\UiRobot.exe\" --connect -url {self.orch_url} -key {license_key}")
+            f"\"C:\\Program Files (x86)\\UiPath\\Studio\\UiRobot.exe\" --connect -url {self.orch_url}/{self.account_name}/{self.service_logical_name} -key {license_key}")
         return (r["Id"], r["UserId"])
 
     def patch_robot_development(self, robotId):
