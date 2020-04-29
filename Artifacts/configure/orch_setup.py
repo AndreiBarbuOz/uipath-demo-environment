@@ -32,12 +32,12 @@ class CloudOrchHelper:
 
         self.login()
 
-    def _getAbsoluteEndpoint(self, relative_endpoint):
+    def _getAbsoluteEndpoint(self, relative_endpoint, resolveTenant = True):
         relative_endpoint = relative_endpoint.lstrip("/")
-        if relative_endpoint.startswith("portal_"):
-            return f"{self.orch_url}/{relative_endpoint}"
-        else:
+        if resolveTenant:
             return f"{self.orch_url}/{self.account_name}/{self.service_name}/{relative_endpoint}"
+        else:
+            return f"{self.orch_url}/{relative_endpoint}"
 
     def _get_access_token(self):
         body = {"grant_type": "refresh_token",
@@ -55,17 +55,17 @@ class CloudOrchHelper:
                 "X-UIPATH-OrganizationUnitId": self.organization_unit_id
                 }
 
-    def post(self, relative_endpoint, body):
+    def post(self, relative_endpoint, body, resolveTenant=True):
         headers = self._get_default_headers()
         return requests.post(self._getAbsoluteEndpoint(relative_endpoint),
                           headers=headers, json=body)
 
-    def patch(self, relative_endpoint, body):
+    def patch(self, relative_endpoint, body, resolveTenant=True):
         headers = self._get_default_headers()
         return requests.patch(self._getAbsoluteEndpoint(relative_endpoint),
                              headers=headers, json=body)
 
-    def get(self, relative_endpoint):
+    def get(self, relative_endpoint, resolveTenant=True):
         headers = self._get_default_headers()
         return requests.get(self._getAbsoluteEndpoint(relative_endpoint), headers=headers)
 
@@ -91,7 +91,7 @@ class CloudOrchHelper:
         headers = {"Authorization": "Bearer " + self.id_token}
         body = {'guid': None}
         r = requests.post(self._getAbsoluteEndpoint(
-            '/portal_/api/profile/getLoggedInUser'), json=body, headers=headers)
+            '/portal_/api/profile/getLoggedInUser', resolveTenant=False), json=body, headers=headers)
         r = r.json()
         my_account = [acc for acc in r if acc['accountUserDto']['accountLogicalName'] == self.account_name][0]
         return my_account['accountUserDto']['id']
@@ -100,7 +100,7 @@ class CloudOrchHelper:
         headers = {"Authorization": "Bearer " + self.id_token}
         body = {'accountUserId': account_user_id}
         r = requests.post(self._getAbsoluteEndpoint(
-            f'/{self.account_name}/portal_/api/serviceInstance/services'), json=body, headers=headers)
+            f'/{self.account_name}/portal_/api/serviceInstance/services', resolveTenant=False), json=body, headers=headers)
         r = r.json()
         return r
     
@@ -108,7 +108,7 @@ class CloudOrchHelper:
         headers = {"Authorization": "Bearer " + self.id_token}
         body = {'accountUserId': account_user_id}
         r = requests.post(self._getAbsoluteEndpoint(
-            f'/{self.account_name}/portal_/api/users'), json=body, headers=headers)
+            f'/{self.account_name}/portal_/api/users', resolveTenant=False), json=body, headers=headers)
         r = r.json()
         return r
     
@@ -139,7 +139,7 @@ class CloudOrchHelper:
             ]
         }
         r = requests.post(self._getAbsoluteEndpoint(
-            f"/portal_/api/serviceInstance/addUsersInService"), headers=headers, json=body)
+            f"/portal_/api/serviceInstance/addUsersInService", resolveTenant=False), headers=headers, json=body)
 
 
     def _invite_user(self, account_user_id, service_id, user_email, roles):
@@ -150,7 +150,7 @@ class CloudOrchHelper:
                 "userCreateRequestDtoList": [
                     {
                         "emailId": user_email,
-                        "redirectUrl": self._getAbsoluteEndpoint(f"/portal_/loginwithguid")
+                        "redirectUrl": self._getAbsoluteEndpoint(f"/portal_/loginwithguid", resolveTenant=False)
                     }
                 ],
                 "tenantRoleListMap": {
@@ -160,7 +160,7 @@ class CloudOrchHelper:
             }
         }
         r = requests.post(self._getAbsoluteEndpoint(
-            f"/portal_/api/users/inviteUsers"), headers=headers, json=body)
+            f"/portal_/api/users/inviteUsers", resolveTenant=False), headers=headers, json=body)
 
     def _get_user_id_tenant(self, user_email):
         r = self.get(f"/odata/Users/?$filter=EmailAddress eq '{user_email}'")
@@ -281,8 +281,7 @@ class CloudOrchHelper:
         print("Uploading package")
         headers = self._get_default_headers()
         files = {'upload_file': open(source_path, 'rb')}
-        r = requests.post(
-            self.orch_url + "/odata/Processes/UiPath.Server.Configuration.OData.UploadPackage", headers=headers, files=files)
+        r = requests.post(self._getAbsoluteEndpoint("/odata/Processes/UiPath.Server.Configuration.OData.UploadPackage"), headers=headers, files=files)
         print(r.json())
 
     def publish_release(self, process_key, process_version):
