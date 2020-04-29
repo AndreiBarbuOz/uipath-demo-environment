@@ -33,10 +33,10 @@ class CloudOrchHelper:
 
     def _getAbsoluteEndpoint(self, relative_endpoint):
         relative_endpoint = relative_endpoint.lstrip("/")
-        if relative_endpoint.startswith("odata"):
-            return f"{self.orch_url}/{self.account_name}/{self.service_logical_name}/{relative_endpoint}"
-        else:
+        if relative_endpoint.startswith("portal_"):
             return f"{self.orch_url}/{relative_endpoint}"
+        else:
+            return f"{self.orch_url}/{self.account_name}/{self.service_logical_name}/{relative_endpoint}"
 
     def _get_access_token(self):
         body = {"grant_type": "refresh_token",
