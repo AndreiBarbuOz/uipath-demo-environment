@@ -4,11 +4,12 @@ import time
 import getpass
 
 class CloudOrchHelper:
-    def __init__(self, username, auth_url, client_id, refresh_token, orch_url, service_logical_name, account_name):
+    def __init__(self, username, auth_url, client_id, refresh_token, orch_url, service_logical_name, service_name, account_name):
         self.refresh_token = refresh_token
         self.client_id = client_id
         self.auth_url = auth_url.rstrip("/")
         self.service_logical_name = service_logical_name
+        self.service_name = service_name
         self.account_name = account_name
         self.orch_url = orch_url.rstrip("/")
 
@@ -36,7 +37,7 @@ class CloudOrchHelper:
         if relative_endpoint.startswith("portal_"):
             return f"{self.orch_url}/{relative_endpoint}"
         else:
-            return f"{self.orch_url}/{self.account_name}/{self.service_logical_name}/{relative_endpoint}"
+            return f"{self.orch_url}/{self.account_name}/{self.service_name}/{relative_endpoint}"
 
     def _get_access_token(self):
         body = {"grant_type": "refresh_token",
@@ -235,7 +236,7 @@ class CloudOrchHelper:
         print("Connecting robot")
         license_key = r["LicenseKey"]
         os.system(
-            f"\"C:\\Program Files (x86)\\UiPath\\Studio\\UiRobot.exe\" --connect -url {self.orch_url}/{self.account_name}/{self.service_logical_name} -key {license_key}")
+            f"\"C:\\Program Files (x86)\\UiPath\\Studio\\UiRobot.exe\" --connect -url {self.orch_url}/{self.account_name}/{self.service_name} -key {license_key}")
         return (r["Id"], r["UserId"])
 
     def patch_robot_development(self, robotId):

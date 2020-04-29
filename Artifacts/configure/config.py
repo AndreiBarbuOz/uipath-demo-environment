@@ -70,7 +70,7 @@ def main(args):
         conn_string = get_secret(args.key_vault, 'mongo-db-conn-string')
     config = get_config(conn_string)
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
-                                     config['refreshToken'], config['orchUrl'], config['serviceLogicalName'], config['accountName'])
+                                     config['refreshToken'], config['orchUrl'], config['serviceLogicalName'], config['serviceName'], config['accountName'])
 
     local_config['FolderName'] = orch.folder_name
     local_config['OrganizationUnitID'] = orch.organization_unit_id
