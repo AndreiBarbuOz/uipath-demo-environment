@@ -43,11 +43,11 @@ def write_local_config(path, data):
     with open(path, 'w') as json_file:
         json.dump(data, json_file)
 
-def get_config(mongoUri):
+def get_config(mongoUri, config_id):
     client = MongoClient(mongoUri)
     col = client.demoVmConfig['config']
 
-    return col.find_one({"id": "test"})['configuration']
+    return col.find_one({"id": config_id})['configuration']
 
 def main(args):
     # read/write local config
@@ -63,14 +63,16 @@ def main(args):
         autoarm_list = args.autoarm.split(",")
     else:
         autoarm_list = []
+    
     if args.conn_string:
         # fetch config and connect robot
         conn_string = args.conn_string
     else:
         conn_string = get_secret(args.key_vault, 'mongo-db-conn-string')
-    config = get_config(conn_string)
+
+    config = get_config(conn_string, args.config_id)
     orch = orch_setup.CloudOrchHelper(args.username, config['authUrl'], config['clientId'],
-                                     config['refreshToken'], config['orchUrl'], config['serviceLogicalName'], config['accountName'])
+                                     config['refreshToken'], config['orchUrl'], config['serviceLogicalName'], config['serviceName'], config['accountName'])
 
     local_config['FolderName'] = orch.folder_name
     local_config['OrganizationUnitID'] = orch.organization_unit_id
@@ -96,6 +98,7 @@ if __name__ == '__main__':
     parser.add_argument("--autoarm", action="store", dest="autoarm")
     parser.add_argument("--conn_string", action="store", dest="conn_string")
     parser.add_argument("--key_vault", action="store", dest="key_vault")
+    parser.add_argument("--config_id", action="store", dest="config_id", default="test")
 
     args = parser.parse_args()
     main(args)

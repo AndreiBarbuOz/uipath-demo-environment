@@ -70,6 +70,9 @@
           "autoarm_processes": {
             "value": "[parameters('autoarm_processes')]"
           },
+          "config_id": {
+            "value": "test"
+          },
           "conn_string": {
             "reference": {
               "keyVault": {
@@ -111,6 +114,9 @@
               }
             },
             "conn_string": {
+              "type": "string"
+            },
+            "config_id": {
               "type": "string"
             }
           },
@@ -270,7 +276,7 @@
                         "[concat('https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/', resourceGroup().tags.Branch, '/Artifacts/configure/config.py')]",
                         "[concat('https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/', resourceGroup().tags.Branch, '/Artifacts/configure/orch_setup.py')]"
                       ],
-                      "commandToExecute": "[concat('python ./config.py --conn_string \"', parameters('conn_string'),'\" --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', parameters('autoarm_processes'), '\"') ]"
+                      "commandToExecute": "[concat('python ./config.py --conn_string \"', parameters('conn_string'),'\" --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', parameters('autoarm_processes'), '\"', ' --config_id \"', parameters('config_id'), '\"') ]"
                     }
                   }
                 }
