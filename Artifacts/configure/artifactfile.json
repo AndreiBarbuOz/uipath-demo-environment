@@ -43,10 +43,16 @@
       "defaultValue": "",
       "displayName": "Key vault containing connection string",
       "description": "Key vault containing connection string"
+    },
+    "config_id": {
+      "type": "string",
+      "defaultValue": "test",
+      "displayName": "Configuration ID",
+      "description": "ID of the MongoDB configuration to use"
     }
   },
   "targetOsType": "Windows",
   "runCommand": {
-    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', parameters('autoarm_processes'), '\"', ' --key_vault \"', parameters('key_vault'), '\"' ) ]"
+    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --ms_account_user \"', parameters('ms_account_user'), '\"', ' --ms_account_pw \"', parameters('ms_account_pw'), '\"', ' --autoarm \"', parameters('autoarm_processes'), '\"', ' --key_vault \"', parameters('key_vault'), '\"', ' --config_id \"', parameters('config_id'), '\"' ) ]"
   }
 }
