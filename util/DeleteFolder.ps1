@@ -27,7 +27,7 @@ function getDefaultHeaders {
 function getAccessTokens {
     param([parameter(Mandatory)][string]$RefreshToken)
     $requestBody = @{grant_type = 'refresh_token'; refresh_token = $RefreshToken; client_id = $UiPathCloudClientID } | ConvertTo-Json
-    $Response = Invoke-WebRequest -Uri "$($UiPathAuthURL)/oauth/token" -Method POST -body $requestBody -ContentType "application/json"
+    $Response = Invoke-WebRequest -Uri "$($UiPathAuthURL)/oauth/token" -Method POST -body $requestBody -ContentType "application/json" -UseBasicParsing
     $jsonResponse = $Response.Content | ConvertFrom-Json 
 
     return $jsonResponse
@@ -38,7 +38,7 @@ function getFolderIDByName {
         [parameter(Mandatory)][string]$folderName
     )  
     $requestHeaders = getDefaultHeaders
-    $Response = Invoke-WebRequest -Uri "$(getBaseUri)/odata/Folders?`$filter=DisplayName eq '$($folderName)'" -Method GET -Headers $requestHeaders
+    $Response = Invoke-WebRequest -Uri "$(getBaseUri)/odata/Folders?`$filter=DisplayName eq '$($folderName)'" -Method GET -Headers $requestHeaders -UseBasicParsing
     $jsonResponse = $Response.Content | ConvertFrom-Json 
     
     return $jsonResponse.value[0].Id
@@ -51,7 +51,7 @@ function getEntities {
         [bool]$withFolderID = $true
     )  
     $requestHeaders = getDefaultHeaders $withFolderID
-    $Response = Invoke-WebRequest -Uri "$(getBaseUri)$($endpoint)" -Method GET -Headers $requestHeaders
+    $Response = Invoke-WebRequest -Uri "$(getBaseUri)$($endpoint)" -Method GET -Headers $requestHeaders -UseBasicParsing
     $jsonResponse = $Response.Content | ConvertFrom-Json 
     return $jsonResponse.value
 }
@@ -63,7 +63,7 @@ function deleteEntity {
         [bool]$withFolderID = $true
     ) 
     $requestHeaders = getDefaultHeaders $withFolderID
-    Invoke-WebRequest -Uri "$(getBaseUri)$($endpoint)($($entityID))" -Method DELETE -Headers $requestHeaders
+    Invoke-WebRequest -Uri "$(getBaseUri)$($endpoint)($($entityID))" -Method DELETE -Headers $requestHeaders -UseBasicParsing
 }
 
 function deleteAllEntities {
@@ -94,7 +94,7 @@ function removeUserFromFolder {
     ) 
     $requestHeaders = getDefaultHeaders $false
     $requestBody = @{userId = $userID } | ConvertTo-Json
-    Invoke-WebRequest -Uri "$(getBaseUri)/odata/Folders($($folderID))/UiPath.Server.Configuration.OData.RemoveUserFromFolder" -Method POST -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+    Invoke-WebRequest -Uri "$(getBaseUri)/odata/Folders($($folderID))/UiPath.Server.Configuration.OData.RemoveUserFromFolder" -Method POST -Headers $requestHeaders -Body $requestBody -ContentType "application/json" -UseBasicParsing
 }
 
 function removeAllUsersFromFolder {

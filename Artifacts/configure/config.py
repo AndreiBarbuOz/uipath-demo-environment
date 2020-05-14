@@ -63,7 +63,6 @@ def main(args):
         autoarm_list = args.autoarm.split(",")
     else:
         autoarm_list = []
-    
     if args.conn_string:
         # fetch config and connect robot
         conn_string = args.conn_string
