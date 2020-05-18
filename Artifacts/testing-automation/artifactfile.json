@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-devtestlab/master/schemas/2016-11-28/dtlArtifacts.json",
+  "title": "Configure Testing Automation",
+  "publisher": "Andrei Barbu",
+  "description": "Runs the configuration script",
+  "tags": [
+    "Windows",
+    "UiPath"
+  ],
+  "parameters": {
+    "username": {
+      "type": "string",
+      "defaultValue": "",
+      "displayName": "Windows username",
+      "description": "Username (required because the artifact runs in a system context)"
+    },
+    "password": {
+      "type": "string",
+      "defaultValue": "",
+      "displayName": "Windows password",
+      "description": "password"
+    },
+    "key_vault": {
+      "type": "string",
+      "defaultValue": "",
+      "displayName": "Key vault containing connection string",
+      "description": "Key vault containing connection string"
+    },
+    "config_id": {
+      "type": "string",
+      "defaultValue": "testing-automation",
+      "displayName": "Configuration ID",
+      "description": "ID of the MongoDB configuration to use"
+    }
+  },
+  "targetOsType": "Windows",
+  "runCommand": {
+    "commandToExecute": "[concat('python ./config.py --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"', ' --key_vault \"', parameters('key_vault'), '\"', ' --config_id \"', parameters('config_id'), '\"' ) ]"
+  }
+}

@@ -216,8 +216,8 @@
                     "typeHandlerVersion": "1.10",
                     "settings": {
                       "fileUris": [
-                        "[concat('https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/', resourceGroup().tags.Branch, '/Artifacts/configure/config.py')]",
-                        "[concat('https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/', resourceGroup().tags.Branch, '/Artifacts/configure/orch_setup.py')]"
+                        "[concat('https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/', resourceGroup().tags.Branch, '/Artifacts/testing-automation/config.py')]",
+                        "[concat('https://raw.githubusercontent.com/AndreiBarbuOz/uipath-demo-environment/', resourceGroup().tags.Branch, '/Artifacts/testing-automation/orch_setup.py')]"
                       ],
                       "commandToExecute": "[concat('python ./config.py --conn_string \"', parameters('conn_string'),'\" --password \"', parameters('password'), '\"', ' --username \"', parameters('username'), '\"' ) ]"
                     }
