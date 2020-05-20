@@ -240,8 +240,8 @@ class CloudOrchHelper:
         return (r["Id"], r["UserId"])
 
     def patch_robot_development(self, robotId):
-        print("Changing robot into StudioPro type")
-        body = {"Type": "StudioPro"}
+        print("Changing robot into Testing Automation type")
+        body = {"Type": "TestAutomation"}
         r = self.patch(f"/odata/Robots({robotId})",body)
 
     def assign_user_role(self, user_id, role_id):

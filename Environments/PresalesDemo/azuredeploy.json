@@ -71,7 +71,7 @@
             "value": "[parameters('autoarm_processes')]"
           },
           "config_id": {
-            "value": "test"
+            "value": "presales-demo"
           },
           "conn_string": {
             "reference": {

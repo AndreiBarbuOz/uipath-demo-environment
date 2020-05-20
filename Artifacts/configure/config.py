@@ -97,7 +97,7 @@ if __name__ == '__main__':
     parser.add_argument("--autoarm", action="store", dest="autoarm")
     parser.add_argument("--conn_string", action="store", dest="conn_string")
     parser.add_argument("--key_vault", action="store", dest="key_vault")
-    parser.add_argument("--config_id", action="store", dest="config_id", default="test")
+    parser.add_argument("--config_id", action="store", dest="config_id", default="presales-demo")
 
     args = parser.parse_args()
     main(args)

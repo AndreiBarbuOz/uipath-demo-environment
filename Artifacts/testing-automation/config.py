@@ -63,11 +63,11 @@ def main(args):
     local_config['FolderName'] = orch.folder_name
     local_config['OrganizationUnitID'] = orch.organization_unit_id
     local_config['UniqueUser'] = orch.sap_user_name
-    #write_local_config(local_config_path, local_config)
+    write_local_config(local_config_path, local_config)
 
     orch_setup.setup_dsf_folder(orch, args.password,  config['processes'], config['assets'], config['roles'])
 
-
+    os.system('"C:\\Program Files (x86)\\UiPath\\Studio\\UiPath.LicenseTool.exe" deactivate')
     os.system('"C:\\Program Files (x86)\\UiPath\\Studio\\UiPath.LicenseTool.exe" activate -l {0}'.format(config['studioLicenseCode']))
 
 if __name__ == '__main__':
