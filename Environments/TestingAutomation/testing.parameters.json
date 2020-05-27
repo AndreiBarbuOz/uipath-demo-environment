@@ -7,6 +7,9 @@
         },
         "password": {
             "value": "vm-password"
+        },
+        "location": {
+            "value": "West Europe"
         }
     }
 }

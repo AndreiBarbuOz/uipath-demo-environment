@@ -16,6 +16,9 @@
         },
         "autoarm_processes": {
             "value": "vm-user"
+        },
+        "location": {
+            "value": "West Europe"
         }
     }
 }
