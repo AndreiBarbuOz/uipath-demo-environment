@@ -1,0 +1,6 @@
+{
+    "itemDisplayName": "Test",
+    "description": "This template creates an Orchestrator VM",
+    "githubUsername": "tadrian88",
+    "summary": "Deploys an Orchestrator instance as an environment in a DevTest Lab."
+}
