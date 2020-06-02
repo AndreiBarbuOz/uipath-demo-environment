@@ -241,6 +241,9 @@
               "apiVersion": "2018-10-01",
               "name": "[variables('vmName')]",
               "location": "[parameters('location')]",
+              "tags": {
+                "AlwaysPoweredOn": "true"
+              },
               "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
               ],
