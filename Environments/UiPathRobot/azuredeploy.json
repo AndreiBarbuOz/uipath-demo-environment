@@ -154,6 +154,9 @@
             "name": "[variables('vmName')]",
             "apiVersion": "2018-10-01",
             "location": "[variables('location')]",
+            "tags": {
+                "AlwaysPoweredOn": "true"
+              },
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('virtualMachineSize')]"
