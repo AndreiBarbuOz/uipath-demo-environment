@@ -1,6 +1,0 @@
-{
-    "itemDisplayName": "UiPath Robot",
-    "description": "This template creates a VM with UiPath Robot installed. ",
-    "githubUsername": "tadrian88",
-    "summary": "Deploys UiPath Robot instance as an environment in a DevTest Lab."
-}

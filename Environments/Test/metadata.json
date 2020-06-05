@@ -1,6 +1,0 @@
-{
-    "itemDisplayName": "FastTest",
-    "description": "This a test template",
-    "githubUsername": "AndreiBarbuOz",
-    "summary": "Deploys a test instance as an environment in a DevTest Lab."
-}
