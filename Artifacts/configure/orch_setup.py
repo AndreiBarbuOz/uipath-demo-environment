@@ -337,7 +337,12 @@ class CloudOrchHelper:
         r = self.post("/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs", body)
         r = r.json()
         print(r)
-        return r["value"][0]["Id"]
+
+        # orchestrator raises an error if the process is already started
+        if "errorCode" in r:
+            raise RuntimeError("Error when trying to start process")
+        else:
+            return r["value"][0]["Id"]
 
 
     def wait_for_processes(self, process_id_set):
@@ -431,11 +436,17 @@ def setup_dsf_folder(orchHelper, password, ms_account_user, ms_account_pw, proce
     # autostart by default
     process_ids_to_merge = set()
     for (release_key, process_args) in release_keys:
-        process_ids_to_merge.add(orchHelper.start_process(release_key, robot_id, process_args))
+        try:
+            process_ids_to_merge.add(orchHelper.start_process(release_key, robot_id, process_args))
+        except RuntimeError:
+            print("Error starting process")
 
     # auto-arm based on arguments
     for release_key in autoarm_release_keys:
-        process_ids_to_merge.add(orchHelper.start_process(release_key, robot_id, "{'Mode': 'arm'}"))
+        try:
+            process_ids_to_merge.add(orchHelper.start_process(release_key, robot_id, "{'Mode': 'arm'}"))
+        except RuntimeError:
+            print("Error starting process")
 
     orchHelper.wait_for_processes(process_ids_to_merge)
     orchHelper.patch_robot_development(robot_id)
